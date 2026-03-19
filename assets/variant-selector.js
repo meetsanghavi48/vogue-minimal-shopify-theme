@@ -12,7 +12,7 @@
     catch(e) { return; }
 
     var smartBtn = document.getElementById('btn-smart');
-    var sizeSection = document.getElementById('size-section');
+    var sizesExpand = document.getElementById('sizes-expand');
     var sizeChips = document.querySelectorAll('.pdp__size-chip');
     var colorSwatches = document.querySelectorAll('.pdp__color-swatch');
     var selected = {};
@@ -34,7 +34,7 @@
       if (pre) {
         preselectFromVariant(pre, sizeChips, colorSwatches, selected);
         sizeSelected = true;
-        if (sizeSection) sizeSection.hidden = false;
+        if (sizesExpand) sizesExpand.hidden = false;
         updateSmartBtn('ready', pre.available);
       }
     }
@@ -54,10 +54,10 @@
       smartBtn.addEventListener('click', function() {
         var state = this.dataset.state;
 
-        if (state === 'select' && sizeSection) {
-          // Expand sizes ABOVE the button
-          sizeSection.hidden = false;
-          this.textContent = 'ADD TO CART';
+        if (state === 'select' && sizesExpand) {
+          // Expand sizes
+          sizesExpand.hidden = false;
+          this.textContent = 'Choose your size';
           this.classList.add('is-disabled-state');
           this.dataset.state = 'choosing';
         } else if (state === 'ready') {
@@ -122,10 +122,10 @@
 
       if (state === 'ready' && available) {
         smartBtn.disabled = false;
-        smartBtn.textContent = 'ADD TO CART';
+        smartBtn.textContent = 'Add to my bag';
       } else if (state === 'ready' && !available) {
         smartBtn.disabled = true;
-        smartBtn.textContent = 'SOLD OUT';
+        smartBtn.textContent = 'Sold Out';
       } else {
         smartBtn.textContent = 'Select Size';
         smartBtn.classList.add('is-select-state');
