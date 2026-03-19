@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "color_primary": "#1a1a1a",
@@ -5,6 +14,67 @@
     "color_accent": "#ffffff",
     "color_text": "#1a1a1a",
     "color_text_muted": "#6b6b6b",
-    "color_border": "#e0e0e0"
+    "color_border": "#e0e0e0",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "main-product": {
+        "type": "main-product",
+        "blocks": {
+          "feature_E87QqN": {
+            "type": "feature",
+            "settings": {
+              "icon": "star",
+              "text": "Comfort"
+            }
+          },
+          "feature_Xrq7mH": {
+            "type": "feature",
+            "settings": {
+              "icon": "star",
+              "text": "Comfort"
+            }
+          },
+          "feature_44QV9U": {
+            "type": "feature",
+            "settings": {
+              "icon": "star",
+              "text": "Comfort"
+            }
+          },
+          "feature_kkkqWW": {
+            "type": "feature",
+            "settings": {
+              "icon": "star",
+              "text": "Comfort"
+            }
+          }
+        },
+        "block_order": [
+          "feature_E87QqN",
+          "feature_Xrq7mH",
+          "feature_44QV9U",
+          "feature_kkkqWW"
+        ],
+        "settings": {
+          "size_chart_url": "",
+          "add_button_text": "Add to my bag"
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {}
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      }
+    }
   }
 }
