@@ -59,11 +59,9 @@
           this.textContent = 'Choose your size';
           this.classList.add('is-disabled-state');
           this.dataset.state = 'choosing';
-          // Scroll body so sizes are visible
-          var body = document.getElementById('pdp-sheet-body');
-          if (body) {
-            setTimeout(function() { body.scrollTop = body.scrollHeight; }, 50);
-          }
+          // Slide the whole sheet up
+          var sheet = document.getElementById('pdp-sheet');
+          if (sheet) sheet.classList.add('is-expanded');
         } else if (state === 'ready') {
           // Add to cart
           addToCart(this);

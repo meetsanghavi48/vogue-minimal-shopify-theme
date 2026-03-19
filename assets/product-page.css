@@ -178,6 +178,11 @@
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -8px 40px rgba(0,0,0,0.08);
   min-height: 100vh;
+  transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pdp__sheet.is-expanded {
+  margin-top: 45vh;
 }
 
 .pdp__sheet-handle {
@@ -193,21 +198,7 @@
 }
 
 .pdp__sheet-content {
-  padding: var(--space-2) var(--space-5) 0;
-}
-
-.pdp__sheet-body {
-  max-height: calc(100vh - 68vh - 80px);
-  overflow-y: auto;
-  scrollbar-width: none;
-  padding-bottom: var(--space-3);
-}
-
-.pdp__sheet-body::-webkit-scrollbar { display: none; }
-
-.pdp__sheet-footer {
-  padding: var(--space-3) 0 var(--space-6);
-  background: var(--color-accent);
+  padding: var(--space-2) var(--space-5) var(--space-6);
 }
 
 /* ---- Title ---- */
