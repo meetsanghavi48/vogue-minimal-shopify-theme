@@ -65,43 +65,34 @@
 
     <div class="pdp__sheet-content">
 
-      <div class="pdp__header-row">
-        <div class="pdp__product-name">
-          <h1 class="pdp__name">{{ product.title }}</h1>
-          <div class="pdp__rating" id="judgeme-widget">
-            <span class="jdgm-preview-badge" data-id="{{ product.id }}">
-              {{ product.metafields.judgeme.badge }}
-            </span>
-          </div>
-        </div>
-        <div class="pdp__price-wrap">
-          {%- if current_variant.compare_at_price > current_variant.price -%}
-            <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
-          {%- endif -%}
-          <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
-        </div>
+      {%- comment -%} Price first, then name {%- endcomment -%}
+      <div class="pdp__price-wrap">
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
+        {%- endif -%}
+        <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
+      </div>
+
+      <h1 class="pdp__name">{{ product.title }}</h1>
+
+      <div class="pdp__rating" id="judgeme-widget">
+        <span class="jdgm-preview-badge" data-id="{{ product.id }}">
+          {{ product.metafields.judgeme.badge }}
+        </span>
       </div>
 
       <form id="product-form" action="/cart/add" method="post" class="pdp__form">
         <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
         <input type="hidden" name="quantity" value="1">
 
-        <div class="pdp__smart-btn-wrap">
-          <button type="button" class="pdp__smart-btn" id="btn-smart"
-            data-has-sizes="{{ has_sizes }}"
-            data-state="{% if has_sizes %}select{% else %}ready{% endif %}"
-          >
-            {%- if has_sizes -%}
-              Select Size
-            {%- elsif current_variant.available -%}
-              Add to my bag
-            {%- else -%}
-              Sold Out
-            {%- endif -%}
-          </button>
-
-          {%- if has_sizes -%}
-            <div class="pdp__sizes-expand" id="sizes-expand" hidden>
+        {%- comment -%} Size selector — label + chips ABOVE the button {%- endcomment -%}
+        {%- if has_sizes -%}
+          <div class="pdp__size-section" id="size-section" hidden>
+            <div class="pdp__size-header">
+              <span class="pdp__size-label">Choose your size</span>
+              <a href="{{ section.settings.size_chart_url | default: '#' }}" class="pdp__size-guide">Size guide</a>
+            </div>
+            <div class="pdp__sizes-row" id="sizes-expand">
               {%- for option in product.options_with_values -%}
                 {%- assign opt_down = option.name | downcase -%}
                 {%- if opt_down contains 'size' -%}
@@ -118,9 +109,10 @@
                 {%- endif -%}
               {%- endfor -%}
             </div>
-          {%- endif -%}
-        </div>
+          </div>
+        {%- endif -%}
 
+        {%- comment -%} Color swatches {%- endcomment -%}
         {%- for option in product.options_with_values -%}
           {%- assign opt_down = option.name | downcase -%}
           {%- if opt_down contains 'color' or opt_down contains 'colour' -%}
@@ -142,6 +134,20 @@
             </div>
           {%- endif -%}
         {%- endfor -%}
+
+        {%- comment -%} ADD TO CART button {%- endcomment -%}
+        <button type="button" class="pdp__smart-btn" id="btn-smart"
+          data-has-sizes="{{ has_sizes }}"
+          data-state="{% if has_sizes %}select{% else %}ready{% endif %}"
+        >
+          {%- if has_sizes -%}
+            Select Size
+          {%- elsif current_variant.available -%}
+            ADD TO CART
+          {%- else -%}
+            Sold Out
+          {%- endif -%}
+        </button>
       </form>
 
     </div>
