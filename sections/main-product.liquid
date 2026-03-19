@@ -2,10 +2,12 @@
 
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign has_sizes = false -%}
+{%- assign size_option_index = 0 -%}
 {%- for option in product.options_with_values -%}
   {%- assign opt_down = option.name | downcase -%}
   {%- if opt_down contains 'size' -%}
     {%- assign has_sizes = true -%}
+    {%- assign size_option_index = forloop.index0 -%}
   {%- endif -%}
 {%- endfor -%}
 
@@ -56,8 +58,8 @@
 
     <div class="pdp__sheet-content">
 
-      {%- comment -%} Title + Price row {%- endcomment -%}
-      <div class="pdp__header-row">
+      {%- comment -%} Title row {%- endcomment -%}
+      <div class="pdp__title-row">
         <h1 class="pdp__name">{{ product.title }}</h1>
         <div class="pdp__price-group">
           {%- if current_variant.compare_at_price > current_variant.price -%}
@@ -67,44 +69,48 @@
         </div>
       </div>
 
-      {%- comment -%} Star rating {%- endcomment -%}
+      {%- comment -%} Rating {%- endcomment -%}
       <div class="pdp__rating">
         <span class="jdgm-preview-badge" data-id="{{ product.id }}">
           {{ product.metafields.judgeme.badge }}
         </span>
       </div>
 
-      {%- comment -%} Icon features — editable blocks {%- endcomment -%}
+      {%- comment -%} Feature badges in rounded container {%- endcomment -%}
       {%- if section.blocks.size > 0 -%}
-        <div class="pdp__features">
+        <div class="pdp__features-card">
           {%- for block in section.blocks -%}
             {%- if block.type == 'feature' -%}
               <div class="pdp__feature" {{ block.shopify_attributes }}>
                 <div class="pdp__feature-icon">
-                  {%- case block.settings.icon -%}
-                    {%- when 'star' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    {%- when 'shield' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    {%- when 'layers' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    {%- when 'refresh' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-                    {%- when 'heart' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                    {%- when 'truck' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                    {%- when 'check' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    {%- when 'award' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                    {%- when 'droplet' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
-                    {%- when 'zap' -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    {%- else -%}
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                  {%- endcase -%}
+                  {%- if block.settings.custom_icon != blank -%}
+                    <img src="{{ block.settings.custom_icon | image_url: width: 48 }}" alt="" width="24" height="24" loading="lazy">
+                  {%- else -%}
+                    {%- case block.settings.icon -%}
+                      {%- when 'star' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      {%- when 'shield' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      {%- when 'layers' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                      {%- when 'refresh' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                      {%- when 'heart' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                      {%- when 'truck' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      {%- when 'check' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      {%- when 'award' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                      {%- when 'droplet' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+                      {%- when 'zap' -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      {%- else -%}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
+                    {%- endcase -%}
+                  {%- endif -%}
                 </div>
                 <span class="pdp__feature-text">{{ block.settings.text }}</span>
               </div>
@@ -113,12 +119,12 @@
         </div>
       {%- endif -%}
 
-      {%- comment -%} Form with fixed button at bottom {%- endcomment -%}
+      {%- comment -%} Form {%- endcomment -%}
       <form id="product-form" action="/cart/add" method="post" class="pdp__form">
         <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
         <input type="hidden" name="quantity" value="1">
 
-        {%- comment -%} Sizes — slides up above button {%- endcomment -%}
+        {%- comment -%} Sizes panel — slides up {%- endcomment -%}
         {%- if has_sizes -%}
           <div class="pdp__sizes-panel" id="sizes-panel" hidden>
             <div class="pdp__sizes-row">
@@ -127,7 +133,7 @@
                 {%- if opt_down contains 'size' -%}
                   {%- for value in option.values -%}
                     <button type="button" class="pdp__size-chip"
-                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      data-option-index="{{ size_option_index }}"
                       data-value="{{ value }}">
                       {{ value }}
                     </button>
@@ -138,7 +144,7 @@
           </div>
         {%- endif -%}
 
-        {%- comment -%} Color swatches {%- endcomment -%}
+        {%- comment -%} Colors {%- endcomment -%}
         {%- for option in product.options_with_values -%}
           {%- assign opt_down = option.name | downcase -%}
           {%- if opt_down contains 'color' or opt_down contains 'colour' -%}
@@ -158,7 +164,7 @@
           {%- endif -%}
         {%- endfor -%}
 
-        {%- comment -%} The button — stays fixed, content slides above it {%- endcomment -%}
+        {%- comment -%} Button {%- endcomment -%}
         <button type="button" class="pdp__smart-btn" id="btn-smart"
           data-has-sizes="{{ has_sizes }}"
           data-state="{% if has_sizes %}select{% else %}ready{% endif %}">
@@ -210,7 +216,7 @@
         {
           "type": "select",
           "id": "icon",
-          "label": "Icon",
+          "label": "Built-in icon",
           "options": [
             { "value": "star", "label": "Star (Rating)" },
             { "value": "shield", "label": "Shield (Protection)" },
@@ -224,6 +230,11 @@
             { "value": "zap", "label": "Zap (Fast)" }
           ],
           "default": "star"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon image (overrides built-in)"
         },
         {
           "type": "text",
