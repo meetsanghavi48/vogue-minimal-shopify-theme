@@ -1,6 +1,6 @@
 /* ===========================
    Vogue Minimal — Product Page
-   Bottom-sheet parallax layout
+   Bottom-sheet layout, no overscroll
    =========================== */
 
 /* ---- Header ---- */
@@ -38,27 +38,16 @@
   gap: var(--space-5);
 }
 
-.header__link {
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
+.header__link { font-size: var(--text-sm); font-weight: 500; }
 
-.header__cart {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+.header__cart { position: relative; display: flex; align-items: center; }
 
 .header__cart-count {
   position: absolute;
-  top: -5px;
-  right: -7px;
-  min-width: 16px;
-  height: 16px;
+  top: -5px; right: -7px;
+  min-width: 16px; height: 16px;
   padding: 0 4px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 16px;
+  font-size: 10px; font-weight: 700; line-height: 16px;
   text-align: center;
   background: var(--color-primary);
   color: var(--color-accent);
@@ -66,35 +55,27 @@
 }
 
 /* ---- Footer ---- */
-.site-footer {
-  padding: var(--space-6) 0;
-  border-top: 1px solid var(--color-border);
-}
-
-.footer__copyright {
-  text-align: center;
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-}
+.site-footer { padding: var(--space-6) 0; border-top: 1px solid var(--color-border); }
+.footer__copyright { text-align: center; font-size: var(--text-xs); color: var(--color-text-muted); }
 
 /* ===========================
-   PDP — Main Container
+   PDP Container
    =========================== */
 .pdp {
   position: relative;
-  min-height: 100vh;
   background: #f0f0f0;
+  overflow: hidden;
 }
 
 /* ===========================
-   Image Layer — fixed behind
+   Image Layer — fixed behind, NO zoom
    =========================== */
 .pdp__image-layer {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 65vh;
+  height: 58vh;
   z-index: 1;
   overflow: hidden;
   background: #f5f5f5;
@@ -110,9 +91,7 @@
   scrollbar-width: none;
 }
 
-.pdp__carousel::-webkit-scrollbar {
-  display: none;
-}
+.pdp__carousel::-webkit-scrollbar { display: none; }
 
 .pdp__slide {
   flex: 0 0 100%;
@@ -121,23 +100,22 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  padding: var(--space-6);
 }
 
 .pdp__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* ---- Dots + Arrows overlay on image ---- */
+/* ---- Dots + Arrows overlay ---- */
 .pdp__image-nav {
   position: absolute;
-  bottom: 80px;
-  left: 0;
-  right: 0;
+  bottom: 24px;
+  left: 0; right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,39 +124,26 @@
 }
 
 .pdp__arrow {
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255,255,255,0.85);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all var(--transition-fast);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
-.pdp__arrow:hover {
-  background: rgba(255, 255, 255, 1);
-}
+.pdp__arrow:hover { background: rgba(255,255,255,1); }
+.pdp__arrow:disabled { opacity: 0.3; cursor: default; }
 
-.pdp__arrow:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.pdp__dots {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+.pdp__dots { display: flex; align-items: center; gap: 5px; }
 
 .pdp__dot {
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: var(--radius-full);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0,0,0,0.2);
   transition: all var(--transition-fast);
   cursor: pointer;
 }
@@ -190,17 +155,14 @@
 
 /* ===========================
    White Bottom Sheet
-   Overlaps the image with rounded top
    =========================== */
 .pdp__sheet {
   position: relative;
   z-index: 10;
-  margin-top: 55vh;
+  margin-top: 50vh;
   background: var(--color-accent);
   border-radius: 28px 28px 0 0;
-  min-height: 50vh;
-  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.08);
-  will-change: transform;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.08);
 }
 
 .pdp__sheet-handle {
@@ -210,17 +172,16 @@
 }
 
 .pdp__handle-bar {
-  width: 36px;
-  height: 4px;
+  width: 36px; height: 4px;
   background: #ddd;
   border-radius: var(--radius-full);
 }
 
 .pdp__sheet-content {
-  padding: var(--space-4) var(--space-6) var(--space-10);
+  padding: var(--space-4) var(--space-6) var(--space-8);
 }
 
-/* ---- Name + Price row ---- */
+/* ---- Name + Price ---- */
 .pdp__header-row {
   display: flex;
   justify-content: space-between;
@@ -229,28 +190,20 @@
   margin-bottom: var(--space-3);
 }
 
-.pdp__product-name {
-  flex: 1;
-  min-width: 0;
-}
+.pdp__product-name { flex: 1; min-width: 0; }
 
 .pdp__name {
   font-size: var(--text-xl);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: var(--color-primary);
 }
 
-.pdp__price-wrap {
-  flex-shrink: 0;
-  text-align: right;
-}
+.pdp__price-wrap { flex-shrink: 0; text-align: right; }
 
 .pdp__price {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-primary);
 }
 
 .pdp__compare-price {
@@ -261,16 +214,9 @@
 }
 
 /* ---- Description ---- */
-.pdp__description {
-  margin-bottom: var(--space-5);
-}
+.pdp__description { margin-bottom: var(--space-5); }
 
-.pdp__desc-text {
-  font-size: var(--text-sm);
-  line-height: 1.6;
-  color: var(--color-text-muted);
-}
-
+.pdp__desc-text,
 .pdp__desc-full {
   font-size: var(--text-sm);
   line-height: 1.6;
@@ -291,35 +237,98 @@
   text-underline-offset: 2px;
 }
 
-/* ---- Variant Options ---- */
+/* ===========================
+   Smart Button System
+   Select Size → expand sizes → Add to Cart
+   =========================== */
 .pdp__form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
 }
 
-.pdp__option-header {
-  margin-bottom: var(--space-3);
+.pdp__smart-btn-wrap {
+  position: relative;
 }
 
-.pdp__option-label {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+/* Main smart button */
+.pdp__smart-btn {
+  width: 100%;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-accent);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+  position: relative;
+  z-index: 2;
 }
 
-.pdp__option-values {
+.pdp__smart-btn:hover { background: #333; }
+
+.pdp__smart-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pdp__smart-btn.is-success {
+  background: #22c55e;
+}
+
+.pdp__smart-btn.is-select-state {
+  background: var(--color-primary);
+}
+
+.pdp__smart-btn.is-disabled-state {
+  background: var(--color-primary);
+  opacity: 0.35;
+}
+
+/* Expanding size chips */
+.pdp__sizes-expand {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  padding: var(--space-4) var(--space-2) var(--space-2);
+  margin-top: -28px;
+  padding-top: calc(var(--space-4) + 28px);
+  background: var(--color-secondary);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  overflow: hidden;
+  animation: expandDown 0.3s ease forwards;
+  position: relative;
+  z-index: 1;
 }
 
-/* Size pills */
-.pdp__pill {
+.pdp__sizes-expand[hidden] {
+  display: none;
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    padding-top: calc(var(--space-4) + 28px);
+    margin-top: -28px;
+  }
+}
+
+.pdp__size-chip {
   min-width: 48px;
-  height: 44px;
+  height: 42px;
   padding: 0 var(--space-4);
   display: flex;
   align-items: center;
@@ -334,28 +343,43 @@
   transition: all var(--transition-fast);
 }
 
-.pdp__pill:hover {
+.pdp__size-chip:hover {
   border-color: var(--color-primary);
 }
 
-.pdp__pill.is-selected {
+.pdp__size-chip.is-selected {
   background: var(--color-primary);
   color: var(--color-accent);
   border-color: var(--color-primary);
 }
 
-.pdp__pill.is-unavailable {
+.pdp__size-chip.is-unavailable {
   opacity: 0.25;
   text-decoration: line-through;
   cursor: not-allowed;
 }
 
-/* Color swatches */
+/* Color row (if product has colors) */
+.pdp__color-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pdp__color-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pdp__swatches { display: flex; gap: var(--space-2); }
+
 .pdp__color-swatch {
-  width: 32px;
-  height: 32px;
+  width: 28px; height: 28px;
   border-radius: var(--radius-full);
-  border: 2px solid var(--color-border);
+  border: 2px solid #e5e5e5;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -365,14 +389,9 @@
   box-shadow: 0 0 0 2px var(--color-accent), 0 0 0 4px var(--color-primary);
 }
 
-.pdp__color-swatch.is-unavailable {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
 /* Swatch colors */
 .swatch--black { background: #1a1a1a; }
-.swatch--white { background: #ffffff; border-color: #ddd; }
+.swatch--white { background: #fff; border-color: #ddd; }
 .swatch--grey, .swatch--gray { background: #9ca3af; }
 .swatch--navy { background: #1e3a5f; }
 .swatch--blue { background: #3b82f6; }
@@ -384,48 +403,8 @@
 .swatch--pink { background: #ec4899; }
 .swatch--orange { background: #f97316; }
 .swatch--charcoal { background: #374151; }
-.swatch--olive { background: #65a30d; }
-.swatch--burgundy { background: #881337; }
 .swatch--tan { background: #d2b48c; }
-.swatch--khaki { background: #bdb76b; }
 .swatch--silver { background: #c0c0c0; }
-.swatch--light-grey, .swatch--light-gray { background: #d1d5db; }
-
-/* ---- Add to Bag Button ---- */
-.pdp__add-btn {
-  width: 100%;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-base);
-  font-weight: 700;
-  color: var(--color-accent);
-  background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  margin-top: var(--space-2);
-  letter-spacing: 0.01em;
-}
-
-.pdp__add-btn:hover {
-  background: #333;
-}
-
-.pdp__add-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.pdp__add-btn.is-success {
-  background: #22c55e;
-}
-
-.pdp__add-btn.is-error {
-  background: #ef4444;
-}
 
 /* ===========================
    Desktop (>= 768px)
@@ -434,8 +413,8 @@
   .pdp {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 100vh;
     background: var(--color-accent);
+    overflow: visible;
   }
 
   .pdp__image-layer {
@@ -443,12 +422,10 @@
     top: 0;
     height: 100vh;
     grid-column: 1;
-    grid-row: 1;
   }
 
   .pdp__sheet {
     grid-column: 2;
-    grid-row: 1;
     margin-top: 0;
     border-radius: 0;
     box-shadow: none;
@@ -458,34 +435,14 @@
     min-height: 100vh;
   }
 
-  .pdp__sheet-handle {
-    display: none;
-  }
+  .pdp__sheet-handle { display: none; }
 
   .pdp__sheet-content {
     padding: var(--space-12) var(--space-10);
     max-width: 520px;
   }
 
-  .pdp__name {
-    font-size: var(--text-3xl);
-  }
-
-  .pdp__price {
-    font-size: var(--text-2xl);
-  }
-
-  .pdp__image-nav {
-    bottom: var(--space-8);
-  }
-
-  .pdp__add-btn {
-    height: 58px;
-    font-size: var(--text-lg);
-  }
-}
-
-/* ---- Price states ---- */
-.pdp__price.is-sale {
-  color: #dc2626;
+  .pdp__name { font-size: var(--text-3xl); }
+  .pdp__price { font-size: var(--text-2xl); }
+  .pdp__smart-btn { height: 58px; font-size: var(--text-lg); }
 }

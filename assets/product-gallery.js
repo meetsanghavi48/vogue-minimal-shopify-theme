@@ -11,15 +11,12 @@
     var dots = document.querySelectorAll('.pdp__dot');
     var prevBtn = document.getElementById('pdp-prev');
     var nextBtn = document.getElementById('pdp-next');
-    var imageLayer = document.getElementById('pdp-image-layer');
-    var sheet = document.getElementById('pdp-sheet');
     var header = document.querySelector('.site-header');
     var current = 0;
     var count = slides.length;
 
     if (count <= 0) return;
 
-    /* ---- Carousel navigation ---- */
     if (prevBtn) prevBtn.addEventListener('click', function() { goTo(current - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function() { goTo(current + 1); });
 
@@ -29,7 +26,6 @@
       });
     });
 
-    // Scroll snap observer
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
@@ -40,7 +36,6 @@
 
     slides.forEach(function(s) { observer.observe(s); });
 
-    // Variant image sync
     document.addEventListener('variant:changed', function(e) {
       if (e.detail && e.detail.featured_image) {
         var filename = e.detail.featured_image.src.split('?')[0].split('/').pop();
@@ -51,12 +46,41 @@
       }
     });
 
-    // Keyboard
     carousel.setAttribute('tabindex', '0');
     carousel.addEventListener('keydown', function(e) {
       if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
       if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
     });
+
+    // Header scroll state (no zoom, just header bg)
+    if (header) {
+      window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 50) {
+          header.classList.add('is-scrolled');
+        } else {
+          header.classList.remove('is-scrolled');
+        }
+      }, { passive: true });
+    }
+
+    // Description toggle
+    var descToggle = document.getElementById('pdp-desc-toggle');
+    var descShort = document.getElementById('pdp-desc');
+    var descFull = document.getElementById('pdp-desc-full');
+    var descLess = document.getElementById('pdp-desc-less');
+
+    if (descToggle && descFull) {
+      descToggle.addEventListener('click', function() {
+        descShort.hidden = true;
+        descFull.hidden = false;
+      });
+    }
+    if (descLess && descShort) {
+      descLess.addEventListener('click', function() {
+        descFull.hidden = true;
+        descShort.hidden = false;
+      });
+    }
 
     function goTo(index) {
       if (index < 0) index = 0;
@@ -76,58 +100,5 @@
     }
 
     setActive(0);
-
-    /* ---- Parallax: image zooms slightly as sheet scrolls up ---- */
-    if (imageLayer && window.innerWidth < 768) {
-      var ticking = false;
-      window.addEventListener('scroll', function() {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            var scrollY = window.pageYOffset;
-            var maxScroll = imageLayer.offsetHeight;
-            var progress = Math.min(scrollY / maxScroll, 1);
-
-            // Subtle zoom on image as you scroll
-            var scale = 1 + (progress * 0.08);
-            carousel.style.transform = 'scale(' + scale + ')';
-
-            // Fade image slightly
-            imageLayer.style.opacity = 1 - (progress * 0.2);
-
-            // Header background on scroll
-            if (header) {
-              if (scrollY > 50) {
-                header.classList.add('is-scrolled');
-              } else {
-                header.classList.remove('is-scrolled');
-              }
-            }
-
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, { passive: true });
-    }
-
-    /* ---- Description toggle ---- */
-    var descToggle = document.getElementById('pdp-desc-toggle');
-    var descShort = document.getElementById('pdp-desc');
-    var descFull = document.getElementById('pdp-desc-full');
-    var descLess = document.getElementById('pdp-desc-less');
-
-    if (descToggle && descFull) {
-      descToggle.addEventListener('click', function() {
-        descShort.hidden = true;
-        descFull.hidden = false;
-      });
-    }
-
-    if (descLess && descShort) {
-      descLess.addEventListener('click', function() {
-        descFull.hidden = true;
-        descShort.hidden = false;
-      });
-    }
   }
 })();

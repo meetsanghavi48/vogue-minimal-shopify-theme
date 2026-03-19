@@ -4,6 +4,13 @@
 {%- assign desc_plain = product.description | strip_html -%}
 {%- assign desc_words = desc_plain | split: ' ' -%}
 {%- assign desc_word_count = desc_words | size -%}
+{%- assign has_sizes = false -%}
+{%- for option in product.options_with_values -%}
+  {%- assign opt_down = option.name | downcase -%}
+  {%- if opt_down contains 'size' -%}
+    {%- assign has_sizes = true -%}
+  {%- endif -%}
+{%- endfor -%}
 
 <section class="pdp" data-section-id="{{ section.id }}">
 
@@ -77,24 +84,50 @@
         <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
         <input type="hidden" name="quantity" value="1">
 
-        {%- for option in product.options_with_values -%}
-          {%- assign option_name_down = option.name | downcase -%}
+        <div class="pdp__smart-btn-wrap">
+          {%- comment -%} Smart button: Select Size → expand → Add to Cart {%- endcomment -%}
+          <button type="button" class="pdp__smart-btn" id="btn-smart"
+            data-has-sizes="{{ has_sizes }}"
+            data-state="{% if has_sizes %}select{% else %}ready{% endif %}"
+          >
+            {%- if has_sizes -%}
+              Select Size
+            {%- elsif current_variant.available -%}
+              Add to my bag
+            {%- else -%}
+              Sold Out
+            {%- endif -%}
+          </button>
 
-          <div class="pdp__option" data-option-index="{{ forloop.index0 }}">
-            <div class="pdp__option-header">
-              <span class="pdp__option-label">
-                {%- if option_name_down contains 'color' or option_name_down contains 'colour' -%}
-                  Select Colour
-                {%- elsif option_name_down contains 'size' -%}
-                  Select Size
-                {%- else -%}
-                  {{ option.name }}
+          {%- comment -%} Size options that expand from the button {%- endcomment -%}
+          {%- if has_sizes -%}
+            <div class="pdp__sizes-expand" id="sizes-expand" hidden>
+              {%- for option in product.options_with_values -%}
+                {%- assign opt_down = option.name | downcase -%}
+                {%- if opt_down contains 'size' -%}
+                  {%- for value in option.values -%}
+                    <button
+                      type="button"
+                      class="pdp__size-chip"
+                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      data-value="{{ value }}"
+                    >
+                      {{ value }}
+                    </button>
+                  {%- endfor -%}
                 {%- endif -%}
-              </span>
+              {%- endfor -%}
             </div>
+          {%- endif -%}
+        </div>
 
-            {%- if option_name_down contains 'color' or option_name_down contains 'colour' -%}
-              <div class="pdp__option-values pdp__option-values--colors">
+        {%- comment -%} Hidden color swatches if product has color option {%- endcomment -%}
+        {%- for option in product.options_with_values -%}
+          {%- assign opt_down = option.name | downcase -%}
+          {%- if opt_down contains 'color' or opt_down contains 'colour' -%}
+            <div class="pdp__color-row">
+              <span class="pdp__color-label">Colour</span>
+              <div class="pdp__swatches">
                 {%- for value in option.values -%}
                   {%- assign color_handle = value | handleize -%}
                   <button
@@ -107,31 +140,9 @@
                   ></button>
                 {%- endfor -%}
               </div>
-            {%- else -%}
-              <div class="pdp__option-values pdp__option-values--pills">
-                {%- for value in option.values -%}
-                  <button
-                    type="button"
-                    class="pdp__pill{% if forloop.first %} is-selected{% endif %}"
-                    data-option-index="{{ forloop.parentloop.index0 }}"
-                    data-value="{{ value }}"
-                    aria-label="{{ option.name }}: {{ value }}"
-                  >
-                    {{ value }}
-                  </button>
-                {%- endfor -%}
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endfor -%}
-
-        <button type="button" class="pdp__add-btn" id="btn-add-to-cart">
-          {%- if current_variant.available -%}
-            Add to my bag
-          {%- else -%}
-            Sold Out
+            </div>
           {%- endif -%}
-        </button>
+        {%- endfor -%}
       </form>
 
     </div>
