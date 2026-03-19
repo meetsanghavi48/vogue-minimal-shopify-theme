@@ -176,7 +176,7 @@
       if (window.Shopify && window.Shopify.formatMoney) {
         priceEl.textContent = Shopify.formatMoney(variant.price);
       } else {
-        priceEl.textContent = '$' + (variant.price / 100).toFixed(2);
+        priceEl.textContent = '\u20b9 ' + (variant.price / 100).toFixed(2);
       }
     }
 
