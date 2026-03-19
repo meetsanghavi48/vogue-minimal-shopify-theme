@@ -193,7 +193,21 @@
 }
 
 .pdp__sheet-content {
-  padding: var(--space-2) var(--space-5) var(--space-6);
+  padding: var(--space-2) var(--space-5) 0;
+}
+
+.pdp__sheet-body {
+  max-height: calc(100vh - 68vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--space-3);
+}
+
+.pdp__sheet-body::-webkit-scrollbar { display: none; }
+
+.pdp__sheet-footer {
+  padding: var(--space-3) 0 var(--space-6);
+  background: var(--color-accent);
 }
 
 /* ---- Title ---- */
@@ -407,10 +421,8 @@
 .swatch--tan { background: #d2b48c; }
 .swatch--silver { background: #c0c0c0; }
 
-/* ---- ADD TO CART button — sticky at bottom of sheet ---- */
+/* ---- ADD TO CART button — always visible at bottom ---- */
 .pdp__smart-btn {
-  position: sticky;
-  bottom: 0;
   width: 100%;
   height: 50px;
   display: flex;
@@ -425,8 +437,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: 0.02em;
-  z-index: 5;
-  margin-top: var(--space-2);
 }
 
 .pdp__smart-btn:hover { background: #333; }

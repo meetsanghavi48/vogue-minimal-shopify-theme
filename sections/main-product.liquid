@@ -57,21 +57,22 @@
     <div class="pdp__sheet-handle"><span class="pdp__handle-bar"></span></div>
 
     <div class="pdp__sheet-content">
+      <div class="pdp__sheet-body" id="pdp-sheet-body">
 
-      <h1 class="pdp__name">{{ product.title }}</h1>
+        <h1 class="pdp__name">{{ product.title }}</h1>
 
-      <div class="pdp__price-line">
-        {%- if current_variant.compare_at_price > current_variant.price -%}
-          <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
-        {%- endif -%}
-        <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
-      </div>
+        <div class="pdp__price-line">
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
+          {%- endif -%}
+          <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
+        </div>
 
-      <div class="pdp__rating">
-        <span class="jdgm-preview-badge" data-id="{{ product.id }}">
-          {{ product.metafields.judgeme.badge }}
-        </span>
-      </div>
+        <div class="pdp__rating">
+          <span class="jdgm-preview-badge" data-id="{{ product.id }}">
+            {{ product.metafields.judgeme.badge }}
+          </span>
+        </div>
 
       {%- comment -%} Feature badges in rounded container {%- endcomment -%}
       {%- if section.blocks.size > 0 -%}
@@ -116,12 +117,9 @@
         </div>
       {%- endif -%}
 
-      {%- comment -%} Form {%- endcomment -%}
-      <form id="product-form" action="/cart/add" method="post" class="pdp__form">
-        <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
-        <input type="hidden" name="quantity" value="1">
+      <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
 
-        {%- comment -%} Sizes panel — slides up {%- endcomment -%}
+        {%- comment -%} Sizes panel — inside scrollable body {%- endcomment -%}
         {%- if has_sizes -%}
           <div class="pdp__sizes-panel" id="sizes-panel" hidden>
             <div class="pdp__sizes-row">
@@ -161,7 +159,9 @@
           {%- endif -%}
         {%- endfor -%}
 
-        {%- comment -%} Button {%- endcomment -%}
+      </div>{%- comment -%} end pdp__sheet-body {%- endcomment -%}
+
+      <div class="pdp__sheet-footer">
         <button type="button" class="pdp__smart-btn" id="btn-smart"
           data-has-sizes="{{ has_sizes }}"
           data-state="{% if has_sizes %}select{% else %}ready{% endif %}">
@@ -173,7 +173,7 @@
             Sold Out
           {%- endif -%}
         </button>
-      </form>
+      </div>
 
     </div>
   </div>
