@@ -154,15 +154,7 @@
   border: none;
 }
 
-/* ---- Judge.me rating ---- */
-.pdp__rating {
-  margin-top: var(--space-1);
-}
-
-.pdp__rating .jdgm-preview-badge {
-  font-size: var(--text-sm);
-}
-
+/* Judge.me star size */
 .pdp__rating .jdgm-star {
   font-size: 14px;
 }
@@ -201,21 +193,48 @@
   padding: var(--space-2) var(--space-5) var(--space-6);
 }
 
-/* ---- Title ---- */
+/* ---- Title Row (title left, rating right) ---- */
+.pdp__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: 4px;
+}
+
 .pdp__name {
   font-size: var(--text-base);
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.01em;
-  margin-bottom: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
-/* ---- Price (below title, one line) ---- */
+/* ---- Rating (next to title, stars + count stacked) ---- */
+.pdp__rating {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.pdp__rating .jdgm-preview-badge {
+  font-size: var(--text-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+/* ---- Price (below title row, one line) ---- */
 .pdp__price-line {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .pdp__compare-price {
@@ -228,22 +247,6 @@
   font-size: var(--text-base);
   font-weight: 800;
   color: var(--color-primary);
-}
-
-/* ---- Rating (stars line + count below) ---- */
-.pdp__rating {
-  margin-bottom: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.pdp__rating .jdgm-preview-badge {
-  font-size: var(--text-xs);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
 }
 
 /* ---- Feature Badges Card ---- */
