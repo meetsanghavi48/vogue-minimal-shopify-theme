@@ -1,0 +1,113 @@
+<section class="product-tabs section-spacing" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="tabs" role="tablist" aria-label="Product information">
+      <button
+        class="tabs__tab is-active"
+        role="tab"
+        id="tab-closet-{{ section.id }}"
+        aria-controls="panel-closet-{{ section.id }}"
+        aria-selected="true"
+        tabindex="0"
+      >
+        {{ section.settings.tab_1_label | default: 'Closet' }}
+      </button>
+      <button
+        class="tabs__tab"
+        role="tab"
+        id="tab-about-{{ section.id }}"
+        aria-controls="panel-about-{{ section.id }}"
+        aria-selected="false"
+        tabindex="-1"
+      >
+        {{ section.settings.tab_2_label | default: 'About' }}
+      </button>
+      <button
+        class="tabs__tab"
+        role="tab"
+        id="tab-reviews-{{ section.id }}"
+        aria-controls="panel-reviews-{{ section.id }}"
+        aria-selected="false"
+        tabindex="-1"
+      >
+        {{ section.settings.tab_3_label | default: 'Reviews' }}
+      </button>
+    </div>
+
+    <div
+      class="tabs__panel is-active"
+      role="tabpanel"
+      id="panel-closet-{{ section.id }}"
+      aria-labelledby="tab-closet-{{ section.id }}"
+      tabindex="0"
+    >
+      <div class="tabs__content">
+        {%- if product.metafields.custom.closet_content -%}
+          {{ product.metafields.custom.closet_content | metafield_tag }}
+        {%- else -%}
+          <p class="tabs__placeholder">Explore our curated collection of {{ product.type | downcase | default: 'products' }}.</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div
+      class="tabs__panel"
+      role="tabpanel"
+      id="panel-about-{{ section.id }}"
+      aria-labelledby="tab-about-{{ section.id }}"
+      tabindex="0"
+      hidden
+    >
+      <div class="tabs__content">
+        {%- if product.description != blank -%}
+          {{ product.description }}
+        {%- else -%}
+          <p class="tabs__placeholder">No description available.</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div
+      class="tabs__panel"
+      role="tabpanel"
+      id="panel-reviews-{{ section.id }}"
+      aria-labelledby="tab-reviews-{{ section.id }}"
+      tabindex="0"
+      hidden
+    >
+      <div class="tabs__content">
+        <div id="product-reviews-{{ section.id }}">
+          <p class="tabs__placeholder">No reviews yet. Be the first to share your thoughts!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'tabs.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Tabs",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tab_1_label",
+      "label": "First tab label",
+      "default": "Closet"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_label",
+      "label": "Second tab label",
+      "default": "About"
+    },
+    {
+      "type": "text",
+      "id": "tab_3_label",
+      "label": "Third tab label",
+      "default": "Reviews"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

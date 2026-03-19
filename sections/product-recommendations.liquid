@@ -1,0 +1,82 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+<section class="product-recs section-spacing" data-section-id="{{ section.id }}" data-product-id="{{ product.id }}" data-limit="{{ section.settings.products_count }}">
+  <div class="container">
+    <div class="product-recs__header">
+      <h2 class="product-recs__title">{{ section.settings.heading | default: 'You may like more' }}</h2>
+      <div class="product-recs__arrows">
+        <button class="product-recs__arrow" data-direction="prev" aria-label="{{ 'general.accessibility.previous' | t }}">
+          {% render 'icon-arrow-left' %}
+        </button>
+        <button class="product-recs__arrow" data-direction="next" aria-label="{{ 'general.accessibility.next' | t }}">
+          {% render 'icon-arrow-right' %}
+        </button>
+      </div>
+    </div>
+
+    <div class="product-recs__carousel" id="recs-carousel-{{ section.id }}">
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+        {%- for product in recommendations.products limit: section.settings.products_count -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    var carousel = document.getElementById('recs-carousel-{{ section.id }}');
+    var productId = section.dataset.productId;
+    var limit = section.dataset.limit || 8;
+
+    // Fetch recommendations via Shopify's product recommendations API
+    if (carousel && !carousel.children.length) {
+      fetch(window.Shopify.routes.root + 'recommendations/products.json?product_id=' + productId + '&limit=' + limit + '&section_id={{ section.id }}')
+        .then(function(response) { return response.text(); })
+        .then(function(text) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(text, 'text/html');
+          var newContent = doc.querySelector('.product-recs__carousel');
+          if (newContent && newContent.innerHTML.trim()) {
+            carousel.innerHTML = newContent.innerHTML;
+          }
+        })
+        .catch(function() {});
+    }
+
+    // Arrow scroll
+    var arrows = section.querySelectorAll('.product-recs__arrow');
+    arrows.forEach(function(arrow) {
+      arrow.addEventListener('click', function() {
+        var dir = this.dataset.direction === 'prev' ? -1 : 1;
+        carousel.scrollBy({ left: dir * 200, behavior: 'smooth' });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You may like more"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Number of products",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

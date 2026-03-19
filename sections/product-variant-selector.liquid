@@ -1,0 +1,107 @@
+<section class="product-variants section-spacing" data-section-id="{{ section.id }}">
+  <div class="container">
+    <form id="product-form-{{ section.id }}" action="/cart/add" method="post" class="product-form">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="variant-id-{{ section.id }}">
+      <input type="hidden" name="quantity" value="1">
+
+      {%- for option in product.options_with_values -%}
+        <div class="variant-option" data-option-index="{{ forloop.index0 }}">
+          {%- assign option_name_lower = option.name | downcase -%}
+
+          {%- if option_name_lower contains 'color' or option_name_lower contains 'colour' -%}
+            {%- comment -%} Color swatches {%- endcomment -%}
+            <div class="variant-option__header">
+              <span class="variant-option__label">{{ option.name }}</span>
+              <span class="variant-option__selected" data-option-selected="{{ forloop.index0 }}">
+                {{ option.selected_value | default: option.values.first }}
+              </span>
+            </div>
+            <div class="variant-option__values variant-option__values--color">
+              {%- for value in option.values -%}
+                {%- assign color_class = value | handleize -%}
+                <button
+                  type="button"
+                  class="color-swatch swatch--{{ color_class }}{% if forloop.first %} is-selected{% endif %}"
+                  data-option-index="{{ forloop.parentloop.index0 }}"
+                  data-value="{{ value }}"
+                  aria-label="{{ value }}"
+                  title="{{ value }}"
+                >
+                  <span class="visually-hidden">{{ value }}</span>
+                </button>
+              {%- endfor -%}
+            </div>
+
+          {%- else -%}
+            {%- comment -%} Size / other option pills {%- endcomment -%}
+            <div class="variant-option__header">
+              <span class="variant-option__label">
+                {%- if option_name_lower contains 'size' -%}
+                  <a href="{{ section.settings.size_chart_url | default: '#' }}" class="variant-option__size-chart">
+                    {{ 'products.product.variant.size_chart' | t }}
+                  </a>
+                {%- endif -%}
+              </span>
+              <span class="variant-option__selected" data-option-selected="{{ forloop.index0 }}">
+                {{ option.selected_value | default: option.values.first }}
+              </span>
+            </div>
+            <div class="variant-option__values variant-option__values--pills">
+              {%- for value in option.values -%}
+                <button
+                  type="button"
+                  class="size-pill{% if forloop.first %} is-selected{% endif %}"
+                  data-option-index="{{ forloop.parentloop.index0 }}"
+                  data-value="{{ value }}"
+                  aria-label="{{ option.name }}: {{ value }}"
+                >
+                  {{ value }}
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+
+      {%- comment -%} Desktop-only inline buttons (hidden on mobile where sticky bar shows) {%- endcomment -%}
+      <div class="product-form__buttons product-form__buttons--desktop">
+        <button type="button" class="btn btn--secondary btn--full" id="add-to-cart-desktop-{{ section.id }}">
+          {{ 'products.product.add_to_cart' | t }}
+        </button>
+        <button type="button" class="btn btn--primary btn--full" id="buy-now-desktop-{{ section.id }}">
+          {{ 'products.product.buy_now' | t }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script type="application/json" id="product-variants-json">
+  {{ product.variants | json }}
+</script>
+
+<script type="application/json" id="product-data-json">
+  {
+    "id": {{ product.id }},
+    "title": {{ product.title | json }},
+    "url": {{ product.url | json }},
+    "options": {{ product.options | json }},
+    "available": {{ product.available | json }}
+  }
+</script>
+
+<script src="{{ 'variant-selector.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Variant Selector",
+  "settings": [
+    {
+      "type": "url",
+      "id": "size_chart_url",
+      "label": "Size chart page URL"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

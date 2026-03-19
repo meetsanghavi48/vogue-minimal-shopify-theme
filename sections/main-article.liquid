@@ -1,0 +1,15 @@
+<section class="page-section">
+  <div class="container section-spacing">
+    <h1>{{ article.title }}</h1>
+    <p style="font-size:0.85rem;color:#666;margin-bottom:1.5rem;">{{ article.published_at | date: '%B %d, %Y' }} by {{ article.author }}</p>
+    <div>{{ article.content }}</div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Article Page",
+  "settings": [],
+  "templates": ["article"]
+}
+{% endschema %}

@@ -1,0 +1,53 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "buy_now": "Buy Now",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "price": {
+        "from": "From",
+        "sale_price": "Sale price",
+        "regular_price": "Regular price"
+      },
+      "variant": {
+        "size_chart": "Size Chart",
+        "colours": "Colours",
+        "available_sizes": "Available Sizes"
+      },
+      "tabs": {
+        "closet": "Closet",
+        "about": "About",
+        "reviews": "Reviews"
+      },
+      "gallery": {
+        "load_image": "Load image in gallery view",
+        "thumbnail": "Thumbnail"
+      },
+      "info_cards": {
+        "colours_heading": "Colours",
+        "colours_description": "Available Colours in This Product",
+        "sizes_heading": "Sizes",
+        "sizes_description": "Available Sizes in This Product",
+        "styles_heading": "Styles",
+        "styles_description": "Available Style in This Product"
+      }
+    },
+    "recommendations": {
+      "heading": "You may like more"
+    }
+  },
+  "cart": {
+    "added": "Added!",
+    "error": "Could not add to cart. Please try again.",
+    "view_cart": "View Cart"
+  }
+}

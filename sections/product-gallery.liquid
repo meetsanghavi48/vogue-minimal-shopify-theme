@@ -1,0 +1,97 @@
+<section class="product-gallery section-spacing" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="gallery__header">
+      <h2 class="gallery__title">Products</h2>
+      <a href="/collections/all" class="gallery__change-link">Change Product</a>
+    </div>
+
+    <div class="gallery__main-wrap">
+      <div class="gallery__carousel" id="gallery-carousel-{{ section.id }}">
+        {%- for image in product.images -%}
+          <div
+            class="gallery__slide{% if forloop.first %} is-active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+          >
+            <img
+              src="{{ image | image_url: width: 800 }}"
+              srcset="
+                {{ image | image_url: width: 400 }} 400w,
+                {{ image | image_url: width: 600 }} 600w,
+                {{ image | image_url: width: 800 }} 800w,
+                {{ image | image_url: width: 1200 }} 1200w
+              "
+              sizes="(min-width: 768px) 600px, 100vw"
+              alt="{{ image.alt | escape | default: product.title }}"
+              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+              width="800"
+              height="{{ 800 | divided_by: image.aspect_ratio | round }}"
+              class="gallery__image"
+            >
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <button
+        class="gallery__arrow gallery__arrow--prev"
+        aria-label="{{ 'general.accessibility.previous' | t }}"
+        data-direction="prev"
+      >
+        {% render 'icon-arrow-left' %}
+      </button>
+
+      <button
+        class="gallery__arrow gallery__arrow--next"
+        aria-label="{{ 'general.accessibility.next' | t }}"
+        data-direction="next"
+      >
+        {% render 'icon-arrow-right' %}
+      </button>
+    </div>
+
+    <div class="gallery__thumbnails" id="gallery-thumbnails-{{ section.id }}">
+      {%- for image in product.images -%}
+        <button
+          class="gallery__thumb{% if forloop.first %} is-active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+          aria-label="{{ 'products.product.gallery.thumbnail' | t }} {{ forloop.index }}"
+        >
+          <img
+            src="{{ image | image_url: width: 100 }}"
+            alt="{{ image.alt | escape | default: product.title }}"
+            loading="lazy"
+            width="80"
+            height="80"
+            class="gallery__thumb-image"
+          >
+        </button>
+      {%- endfor -%}
+    </div>
+
+    <div class="gallery__dots" id="gallery-dots-{{ section.id }}">
+      {%- for image in product.images -%}
+        <button
+          class="gallery__dot{% if forloop.first %} is-active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+          aria-label="Go to image {{ forloop.index }}"
+        ></button>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'product-gallery.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Gallery",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "Show thumbnails",
+      "default": true
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

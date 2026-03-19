@@ -1,0 +1,93 @@
+<section class="product-info-cards section-spacing" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="info-cards__grid">
+      {%- for block in section.blocks -%}
+        <div class="info-card" {{ block.shopify_attributes }}>
+          <div class="info-card__icon">
+            {%- case block.settings.icon -%}
+              {%- when 'palette' -%}
+                {% render 'icon-palette' %}
+              {%- when 'ruler' -%}
+                {% render 'icon-ruler' %}
+              {%- when 'grid' -%}
+                {% render 'icon-grid' %}
+            {%- endcase -%}
+          </div>
+          <h3 class="info-card__heading">{{ block.settings.heading }}</h3>
+          <p class="info-card__description">{{ block.settings.description }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Info Cards",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "info_card",
+      "name": "Info Card",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "palette", "label": "Palette (Colours)" },
+            { "value": "ruler", "label": "Ruler (Sizes)" },
+            { "value": "grid", "label": "Grid (Styles)" }
+          ],
+          "default": "palette"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Colours"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Available Colours in This Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Info Cards",
+      "blocks": [
+        {
+          "type": "info_card",
+          "settings": {
+            "icon": "palette",
+            "heading": "Colours",
+            "description": "Available Colours in This Product"
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "icon": "ruler",
+            "heading": "Sizes",
+            "description": "Available Sizes in This Product"
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "icon": "grid",
+            "heading": "Styles",
+            "description": "Available Style in This Product"
+          }
+        }
+      ]
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

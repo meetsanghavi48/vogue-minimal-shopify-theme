@@ -1,0 +1,27 @@
+{%- comment -%}
+  Renders product price with compare-at price support.
+
+  Usage: {% render 'price', product: product %}
+  Or:    {% render 'price', price: variant.price, compare_at_price: variant.compare_at_price %}
+{%- endcomment -%}
+
+{%- if product -%}
+  {%- assign current_price = product.price -%}
+  {%- assign compare_price = product.compare_at_price -%}
+{%- else -%}
+  {%- assign current_price = price -%}
+  {%- assign compare_price = compare_at_price -%}
+{%- endif -%}
+
+<div class="price" id="price-{{ section.id }}">
+  {%- if compare_price > current_price -%}
+    <span class="price__compare">
+      <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+      <s>{{ compare_price | money }}</s>
+    </span>
+  {%- endif -%}
+  <span class="price__current {% if compare_price > current_price %}price__current--sale{% endif %}">
+    <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+    {{ current_price | money }}
+  </span>
+</div>

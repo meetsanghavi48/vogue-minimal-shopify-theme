@@ -1,0 +1,78 @@
+{{ 'product-page.css' | asset_url | stylesheet_tag }}
+
+<section class="product-hero" data-section-id="{{ section.id }}">
+  <div class="product-hero__inner">
+    <div class="product-hero__media">
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 800 }}"
+          srcset="
+            {{ product.featured_image | image_url: width: 400 }} 400w,
+            {{ product.featured_image | image_url: width: 600 }} 600w,
+            {{ product.featured_image | image_url: width: 800 }} 800w,
+            {{ product.featured_image | image_url: width: 1200 }} 1200w
+          "
+          sizes="(min-width: 768px) 50vw, 100vw"
+          alt="{{ product.featured_image.alt | escape | default: product.title }}"
+          loading="eager"
+          fetchpriority="high"
+          width="800"
+          height="{{ 800 | divided_by: product.featured_image.aspect_ratio | round }}"
+          class="product-hero__image"
+        >
+      {%- else -%}
+        <div class="product-hero__placeholder">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="product-hero__content">
+      {%- if product.vendor -%}
+        <div class="product-hero__vendor">
+          <span class="product-hero__vendor-name">{{ product.vendor }}</span>
+        </div>
+      {%- endif -%}
+
+      <h1 class="product-hero__title">{{ product.title }}</h1>
+
+      <div class="product-hero__price">
+        <span class="product-hero__price-amount" id="hero-price">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+        {%- if product.variants.size > 1 -%}
+          <span class="product-hero__price-label">/{{ 'products.product.variant.available_sizes' | t }}</span>
+        {%- endif -%}
+      </div>
+
+      <a href="/cart/{{ product.selected_or_first_available_variant.id }}:1" class="btn btn--white product-hero__buy-btn">
+        {{ section.settings.buy_button_text | default: 'Buy Now' }}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "buy_button_text",
+      "label": "Buy button text",
+      "default": "Buy Now"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#1a1a1a"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

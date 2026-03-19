@@ -1,0 +1,43 @@
+<section class="sticky-bar" data-section-id="{{ section.id }}">
+  <div class="sticky-bar__inner">
+    <button
+      type="button"
+      class="btn btn--secondary sticky-bar__btn"
+      id="sticky-add-to-cart"
+      aria-label="{{ 'products.product.add_to_cart' | t }}"
+    >
+      {{ section.settings.add_to_cart_text | default: 'Add to Cart' }}
+    </button>
+    <button
+      type="button"
+      class="btn btn--primary sticky-bar__btn"
+      id="sticky-buy-now"
+      aria-label="{{ 'products.product.buy_now' | t }}"
+    >
+      {{ section.settings.buy_now_text | default: 'Buy Now' }}
+    </button>
+  </div>
+</section>
+
+<script src="{{ 'cart-api.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Sticky Bottom Bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to Cart button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "buy_now_text",
+      "label": "Buy Now button text",
+      "default": "Buy Now"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

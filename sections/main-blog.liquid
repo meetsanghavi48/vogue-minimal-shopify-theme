@@ -1,0 +1,20 @@
+<section class="page-section">
+  <div class="container section-spacing">
+    <h1>{{ blog.title }}</h1>
+    {%- for article in blog.articles -%}
+      <article style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid #eee;">
+        <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+        <p style="font-size:0.85rem;color:#666;">{{ article.published_at | date: '%B %d, %Y' }}</p>
+        <p>{{ article.excerpt_or_content | strip_html | truncatewords: 30 }}</p>
+      </article>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog Page",
+  "settings": [],
+  "templates": ["blog"]
+}
+{% endschema %}

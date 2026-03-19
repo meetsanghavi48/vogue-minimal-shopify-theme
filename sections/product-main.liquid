@@ -1,0 +1,181 @@
+{{ 'product-page.css' | asset_url | stylesheet_tag }}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<section class="pdp" data-section-id="{{ section.id }}">
+
+  {%- comment -%} ======= FULL-BLEED IMAGE LAYER (stays behind) ======= {%- endcomment -%}
+  <div class="pdp__image-layer" id="pdp-image-layer">
+    <div class="pdp__carousel" id="pdp-carousel">
+      {%- for image in product.images -%}
+        <div class="pdp__slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}">
+          <img
+            src="{{ image | image_url: width: 1000 }}"
+            srcset="
+              {{ image | image_url: width: 500 }} 500w,
+              {{ image | image_url: width: 750 }} 750w,
+              {{ image | image_url: width: 1000 }} 1000w,
+              {{ image | image_url: width: 1400 }} 1400w
+            "
+            sizes="100vw"
+            alt="{{ image.alt | escape | default: product.title }}"
+            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}"
+            width="1000"
+            height="{{ 1000 | divided_by: image.aspect_ratio | round }}"
+            class="pdp__image"
+            draggable="false"
+          >
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Dots + Arrows overlay on image {%- endcomment -%}
+    <div class="pdp__image-nav">
+      <button class="pdp__arrow pdp__arrow--prev" id="pdp-prev" aria-label="Previous image">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="pdp__dots" id="pdp-dots">
+        {%- for image in product.images -%}
+          <span class="pdp__dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+        {%- endfor -%}
+      </div>
+      <button class="pdp__arrow pdp__arrow--next" id="pdp-next" aria-label="Next image">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} ======= WHITE BOTTOM SHEET (scrolls up over image) ======= {%- endcomment -%}
+  <div class="pdp__sheet" id="pdp-sheet">
+    <div class="pdp__sheet-handle">
+      <span class="pdp__handle-bar"></span>
+    </div>
+
+    <div class="pdp__sheet-content">
+
+      {%- comment -%} Name + Price row {%- endcomment -%}
+      <div class="pdp__header-row">
+        <div class="pdp__product-name">
+          <h1 class="pdp__name">{{ product.title }}</h1>
+        </div>
+        <div class="pdp__price-wrap">
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
+          {%- endif -%}
+          <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
+        </div>
+      </div>
+
+      {%- comment -%} Short description with "More" {%- endcomment -%}
+      {%- if product.description != blank -%}
+        <div class="pdp__description">
+          <p class="pdp__desc-text" id="pdp-desc">
+            {{ product.description | strip_html | truncatewords: 18 }}
+            {%- if product.description | strip_html | split: ' ' | size > 18 -%}
+              <button class="pdp__desc-more" id="pdp-desc-toggle" type="button">More</button>
+            {%- endif -%}
+          </p>
+          <div class="pdp__desc-full" id="pdp-desc-full" hidden>
+            {{ product.description }}
+            <button class="pdp__desc-more" id="pdp-desc-less" type="button">Less</button>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Variant selector {%- endcomment -%}
+      <form id="product-form" action="/cart/add" method="post" class="pdp__form">
+        <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
+        <input type="hidden" name="quantity" value="1">
+
+        {%- for option in product.options_with_values -%}
+          {%- assign option_name_lower = option.name | downcase -%}
+
+          <div class="pdp__option" data-option-index="{{ forloop.index0 }}">
+            <div class="pdp__option-header">
+              <span class="pdp__option-label">
+                {%- if option_name_lower contains 'color' or option_name_lower contains 'colour' -%}
+                  Select Colour
+                {%- elsif option_name_lower contains 'size' -%}
+                  Select Size
+                {%- else -%}
+                  {{ option.name }}
+                {%- endif -%}
+              </span>
+            </div>
+
+            {%- if option_name_lower contains 'color' or option_name_lower contains 'colour' -%}
+              <div class="pdp__option-values pdp__option-values--colors">
+                {%- for value in option.values -%}
+                  {%- assign color_handle = value | handleize -%}
+                  <button
+                    type="button"
+                    class="pdp__color-swatch swatch--{{ color_handle }}{% if forloop.first %} is-selected{% endif %}"
+                    data-option-index="{{ forloop.parentloop.index0 }}"
+                    data-value="{{ value }}"
+                    aria-label="{{ value }}"
+                    title="{{ value }}"
+                  ></button>
+                {%- endfor -%}
+              </div>
+            {%- else -%}
+              <div class="pdp__option-values pdp__option-values--pills">
+                {%- for value in option.values -%}
+                  <button
+                    type="button"
+                    class="pdp__pill{% if forloop.first %} is-selected{% endif %}"
+                    data-option-index="{{ forloop.parentloop.index0 }}"
+                    data-value="{{ value }}"
+                    aria-label="{{ option.name }}: {{ value }}"
+                  >
+                    {{ value }}
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+
+        {%- comment -%} Add to bag button {%- endcomment -%}
+        <button type="button" class="pdp__add-btn" id="btn-add-to-cart">
+          {%- if current_variant.available -%}
+            Add to my bag
+          {%- else -%}
+            Sold Out
+          {%- endif -%}
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+</section>
+
+{%- comment -%} Variant data for JS {%- endcomment -%}
+<script type="application/json" id="product-variants-json">
+  {{ product.variants | json }}
+</script>
+
+<script src="{{ 'variant-selector.js' | asset_url }}" defer></script>
+<script src="{{ 'product-gallery.js' | asset_url }}" defer></script>
+<script src="{{ 'cart-api.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Page",
+  "settings": [
+    {
+      "type": "url",
+      "id": "size_chart_url",
+      "label": "Size chart page URL"
+    },
+    {
+      "type": "text",
+      "id": "add_button_text",
+      "label": "Add to cart button text",
+      "default": "Add to my bag"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

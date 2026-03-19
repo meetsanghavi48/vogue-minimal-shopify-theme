@@ -1,0 +1,35 @@
+<section class="page-section">
+  <div class="container section-spacing">
+    <h1>Your Cart</h1>
+    {%- if cart.item_count > 0 -%}
+      <form action="/cart" method="post">
+        {%- for item in cart.items -%}
+          <div style="display:flex;gap:1rem;align-items:center;padding:1rem 0;border-bottom:1px solid #eee;">
+            {%- if item.image -%}
+              <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title | escape }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+            {%- endif -%}
+            <div style="flex:1;">
+              <h3 style="font-size:0.95rem;font-weight:600;">{{ item.title }}</h3>
+              <p style="font-size:0.85rem;color:#666;">{{ item.price | money }} x {{ item.quantity }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+        <div style="text-align:right;margin-top:1.5rem;">
+          <p style="font-size:1.1rem;font-weight:700;">Total: {{ cart.total_price | money }}</p>
+          <button type="submit" name="checkout" class="btn btn--primary" style="margin-top:1rem;">Checkout</button>
+        </div>
+      </form>
+    {%- else -%}
+      <p style="margin-top:1rem;">Your cart is empty.</p>
+      <a href="/collections/all" class="btn btn--primary" style="margin-top:1rem;display:inline-block;">Continue Shopping</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "settings": [],
+  "templates": ["cart"]
+}
+{% endschema %}
