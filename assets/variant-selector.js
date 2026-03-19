@@ -12,7 +12,7 @@
     catch(e) { return; }
 
     var smartBtn = document.getElementById('btn-smart');
-    var sizesExpand = document.getElementById('sizes-expand');
+    var sizesExpand = document.getElementById('sizes-panel');
     var sizeChips = document.querySelectorAll('.pdp__size-chip');
     var colorSwatches = document.querySelectorAll('.pdp__color-swatch');
     var selected = {};
