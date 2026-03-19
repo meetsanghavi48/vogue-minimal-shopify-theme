@@ -154,9 +154,20 @@
   border: none;
 }
 
-/* Judge.me star size */
+/* Judge.me — stars inline + (count) format */
 .pdp__rating .jdgm-star {
-  font-size: 14px;
+  font-size: 13px;
+}
+
+/* Hide the "reviews" text, show only count in parentheses */
+.pdp__rating .jdgm-preview-badge__text {
+  font-size: 0;
+}
+
+.pdp__rating .jdgm-preview-badge__text::before {
+  font-size: var(--text-xs);
+  content: "(" attr(data-number-of-reviews) ")";
+  color: var(--color-text-muted);
 }
 
 /* ===========================
@@ -191,45 +202,41 @@
   padding: var(--space-2) var(--space-5) var(--space-6);
 }
 
-/* ---- Title Row ---- */
-.pdp__title-row {
-  margin-bottom: var(--space-3);
-}
-
-.pdp__title-left {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
+/* ---- Title ---- */
 .pdp__name {
   font-size: var(--text-base);
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.01em;
+  margin-bottom: 4px;
 }
 
-/* ---- Rating (below title, left-aligned) ---- */
-.pdp__rating {
+/* ---- Price + Rating row ---- */
+.pdp__price-rating-row {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.pdp__price-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- Rating (right side of price row) ---- */
+.pdp__rating {
+  flex-shrink: 0;
 }
 
 .pdp__rating .jdgm-preview-badge {
   font-size: var(--text-xs);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-}
-
-/* ---- Price (below rating, one line) ---- */
-.pdp__price-line {
-  display: flex;
   align-items: center;
-  gap: var(--space-2);
-  margin-top: 2px;
+  gap: 3px;
+  white-space: nowrap;
 }
 
 .pdp__compare-price {
