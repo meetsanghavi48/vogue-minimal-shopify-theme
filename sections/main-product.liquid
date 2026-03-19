@@ -58,18 +58,15 @@
 
     <div class="pdp__sheet-content">
 
-      {%- comment -%} Title row {%- endcomment -%}
-      <div class="pdp__title-row">
-        <h1 class="pdp__name">{{ product.title }}</h1>
-        <div class="pdp__price-group">
-          {%- if current_variant.compare_at_price > current_variant.price -%}
-            <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
-          {%- endif -%}
-          <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
-        </div>
+      <h1 class="pdp__name">{{ product.title }}</h1>
+
+      <div class="pdp__price-line">
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
+        {%- endif -%}
+        <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
       </div>
 
-      {%- comment -%} Rating {%- endcomment -%}
       <div class="pdp__rating">
         <span class="jdgm-preview-badge" data-id="{{ product.id }}">
           {{ product.metafields.judgeme.badge }}
