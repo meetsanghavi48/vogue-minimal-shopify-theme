@@ -1,9 +1,6 @@
 {{ 'product-page.css' | asset_url | stylesheet_tag }}
 
 {%- assign current_variant = product.selected_or_first_available_variant -%}
-{%- assign desc_plain = product.description | strip_html -%}
-{%- assign desc_words = desc_plain | split: ' ' -%}
-{%- assign desc_word_count = desc_words | size -%}
 {%- assign has_sizes = false -%}
 {%- for option in product.options_with_values -%}
   {%- assign opt_down = option.name | downcase -%}
@@ -64,21 +61,6 @@
           <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
         </div>
       </div>
-
-      {%- if product.description != blank -%}
-        <div class="pdp__description">
-          <p class="pdp__desc-text" id="pdp-desc">
-            {{ desc_plain | truncatewords: 18 }}
-            {%- if desc_word_count > 18 -%}
-              <button class="pdp__desc-more" id="pdp-desc-toggle" type="button">More</button>
-            {%- endif -%}
-          </p>
-          <div class="pdp__desc-full" id="pdp-desc-full" hidden>
-            {{ product.description }}
-            <button class="pdp__desc-more" id="pdp-desc-less" type="button">Less</button>
-          </div>
-        </div>
-      {%- endif -%}
 
       <form id="product-form" action="/cart/add" method="post" class="pdp__form">
         <input type="hidden" name="id" value="{{ current_variant.id }}" id="variant-id">
