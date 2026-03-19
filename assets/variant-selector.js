@@ -11,13 +11,11 @@
     try { variants = JSON.parse(jsonEl.textContent); }
     catch(e) { return; }
 
-    var smartBtn = document.getElementById('btn-smart');
-    var sizesExpand = document.getElementById('sizes-panel');
-    var sizeChips = document.querySelectorAll('.pdp__size-chip');
+    var addBtn = document.getElementById('btn-add');
+    var sizeDropdown = document.getElementById('size-dropdown');
     var colorSwatches = document.querySelectorAll('.pdp__color-swatch');
     var selected = {};
-    var hasSizes = smartBtn && smartBtn.dataset.hasSizes === 'true';
-    var sizeSelected = false;
+    var hasSizes = addBtn && addBtn.dataset.hasSizes === 'true';
 
     // Init color with first value
     colorSwatches.forEach(function(btn) {
@@ -32,64 +30,44 @@
     if (vp) {
       var pre = variants.find(function(v) { return v.id === parseInt(vp, 10); });
       if (pre) {
-        preselectFromVariant(pre, sizeChips, colorSwatches, selected);
-        sizeSelected = true;
-        if (sizesExpand) sizesExpand.hidden = false;
-        updateSmartBtn('ready', pre.available);
+        preselectFromVariant(pre, sizeDropdown, colorSwatches, selected);
+        if (addBtn) addBtn.disabled = false;
       }
     }
 
-    // No sizes? Button is ready immediately
+    // No sizes? Button ready immediately
     if (!hasSizes) {
-      // Single variant product — select first variant
       if (variants.length > 0) {
         selected['0'] = variants[0].option1;
         applyVariant(variants[0]);
       }
-      updateSmartBtn('ready', variants[0] && variants[0].available);
+      if (addBtn) addBtn.disabled = false;
     }
 
-    // Smart button tap — expand sizes
-    if (smartBtn) {
-      smartBtn.addEventListener('click', function() {
-        var state = this.dataset.state;
-
-        if (state === 'select' && sizesExpand) {
-          sizesExpand.hidden = false;
-          this.textContent = 'Choose your size';
-          this.classList.add('is-disabled-state');
-          this.dataset.state = 'choosing';
-          // Slide the whole sheet up
-          var sheet = document.getElementById('pdp-sheet');
-          if (sheet) sheet.classList.add('is-expanded');
-        } else if (state === 'ready') {
-          // Add to cart
-          addToCart(this);
-        }
-      });
-    }
-
-    // Size chip click
-    sizeChips.forEach(function(chip) {
-      chip.addEventListener('click', function() {
-        if (this.classList.contains('is-unavailable')) return;
-
-        // Update UI
-        sizeChips.forEach(function(c) { c.classList.remove('is-selected'); });
-        this.classList.add('is-selected');
-
-        selected[this.dataset.optionIndex] = this.dataset.value;
-        sizeSelected = true;
+    // Size dropdown change
+    if (sizeDropdown) {
+      sizeDropdown.addEventListener('change', function() {
+        selected[this.dataset.optionIndex] = this.value;
 
         var match = findVariant(variants, selected);
         if (match) {
           applyVariant(match);
-          updateSmartBtn('ready', match.available);
+          if (addBtn) {
+            addBtn.disabled = !match.available;
+            if (!match.available) {
+              addBtn.querySelector('span').textContent = 'Sold Out';
+            } else {
+              addBtn.querySelector('span').textContent = 'Add';
+            }
+          }
         } else {
-          updateSmartBtn('ready', false);
+          if (addBtn) {
+            addBtn.disabled = true;
+            addBtn.querySelector('span').textContent = 'Sold Out';
+          }
         }
       });
-    });
+    }
 
     // Color swatch click
     colorSwatches.forEach(function(btn) {
@@ -102,45 +80,31 @@
         var match = findVariant(variants, selected);
         if (match) {
           applyVariant(match);
-          if (sizeSelected || !hasSizes) {
-            updateSmartBtn('ready', match.available);
+          // Update button if size already selected or no sizes
+          if (!hasSizes || (sizeDropdown && sizeDropdown.value)) {
+            if (addBtn) {
+              addBtn.disabled = !match.available;
+              addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
+            }
           }
         }
       });
     });
 
-    // Mark unavailable sizes
-    sizeChips.forEach(function(chip) {
-      var test = Object.assign({}, selected);
-      test[chip.dataset.optionIndex] = chip.dataset.value;
-      var v = findVariant(variants, test);
-      if (!v || !v.available) chip.classList.add('is-unavailable');
-    });
-
-    function updateSmartBtn(state, available) {
-      if (!smartBtn) return;
-      smartBtn.dataset.state = state;
-      smartBtn.classList.remove('is-select-state', 'is-disabled-state');
-
-      if (state === 'ready' && available) {
-        smartBtn.disabled = false;
-        smartBtn.textContent = 'Add to my bag';
-      } else if (state === 'ready' && !available) {
-        smartBtn.disabled = true;
-        smartBtn.textContent = 'Sold Out';
-      } else {
-        smartBtn.textContent = 'Select Size';
-        smartBtn.classList.add('is-select-state');
-        smartBtn.disabled = false;
-      }
+    // Add button click
+    if (addBtn) {
+      addBtn.addEventListener('click', function() {
+        if (this.disabled) return;
+        addToCart(this);
+      });
     }
 
-    function preselectFromVariant(variant, chips, swatches, sel) {
+    function preselectFromVariant(variant, dropdown, swatches, sel) {
       if (variant.option1) {
         sel['0'] = variant.option1;
-        chips.forEach(function(c) {
-          if (c.dataset.optionIndex === '0' && c.dataset.value === variant.option1) c.classList.add('is-selected');
-        });
+        if (dropdown && dropdown.dataset.optionIndex === '0') {
+          dropdown.value = variant.option1;
+        }
         swatches.forEach(function(s) {
           if (s.dataset.optionIndex === '0' && s.dataset.value === variant.option1) {
             swatches.forEach(function(x) { x.classList.remove('is-selected'); });
@@ -150,9 +114,9 @@
       }
       if (variant.option2) {
         sel['1'] = variant.option2;
-        chips.forEach(function(c) {
-          if (c.dataset.optionIndex === '1' && c.dataset.value === variant.option2) c.classList.add('is-selected');
-        });
+        if (dropdown && dropdown.dataset.optionIndex === '1') {
+          dropdown.value = variant.option2;
+        }
       }
       if (variant.option3) {
         sel['2'] = variant.option3;
@@ -195,9 +159,10 @@
     var id = input ? input.value : null;
     if (!id || button.disabled) return;
 
-    var originalText = button.textContent;
+    var spanEl = button.querySelector('span');
+    var originalText = spanEl ? spanEl.textContent : 'Add';
     button.disabled = true;
-    button.textContent = 'Adding...';
+    if (spanEl) spanEl.textContent = 'Adding...';
 
     var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
 
@@ -211,7 +176,7 @@
       return r.json();
     })
     .then(function() {
-      button.textContent = 'Added to bag!';
+      if (spanEl) spanEl.textContent = 'Added!';
       button.classList.add('is-success');
 
       // Update cart count
@@ -224,15 +189,15 @@
         });
 
       setTimeout(function() {
-        button.textContent = originalText;
+        if (spanEl) spanEl.textContent = originalText;
         button.disabled = false;
         button.classList.remove('is-success');
       }, 2500);
     })
     .catch(function() {
-      button.textContent = 'Could not add';
+      if (spanEl) spanEl.textContent = 'Error';
       setTimeout(function() {
-        button.textContent = originalText;
+        if (spanEl) spanEl.textContent = originalText;
         button.disabled = false;
       }, 2500);
     });
