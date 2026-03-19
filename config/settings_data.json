@@ -27,28 +27,31 @@
             "type": "feature",
             "settings": {
               "icon": "star",
-              "text": "Comfort"
+              "custom_icon": "shopify://shop_images/nofadeicon.png",
+              "text": "No Fade"
             }
           },
           "feature_Xrq7mH": {
             "type": "feature",
             "settings": {
               "icon": "star",
-              "text": "Comfort"
+              "custom_icon": "shopify://shop_images/stretchableicon.png",
+              "text": "Stretchable"
             }
           },
           "feature_44QV9U": {
             "type": "feature",
             "settings": {
               "icon": "star",
-              "text": "Comfort"
+              "custom_icon": "shopify://shop_images/nosmellicon.png",
+              "text": "No Smell"
             }
           },
           "feature_kkkqWW": {
             "type": "feature",
             "settings": {
               "icon": "star",
-              "text": "Comfort"
+              "text": "Straight Fit"
             }
           }
         },
