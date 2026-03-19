@@ -139,22 +139,24 @@
           {%- endif -%}
         {%- endfor -%}
 
-      {%- comment -%} Bottom row: Size dropdown + Add button {%- endcomment -%}
+      {%- comment -%} Bottom row: Custom size picker + Add button {%- endcomment -%}
       <div class="pdp__bottom-row">
         {%- if has_sizes -%}
-          <div class="pdp__size-dropdown-wrap">
-            <select class="pdp__size-dropdown" id="size-dropdown" data-option-index="{{ size_option_index }}">
-              <option value="" disabled selected>Size</option>
+          <div class="pdp__custom-select" id="custom-size-select" data-option-index="{{ size_option_index }}">
+            <button type="button" class="pdp__select-trigger" id="size-trigger">
+              <span class="pdp__select-label">Size</span>
+              <svg class="pdp__select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="pdp__select-dropdown" id="size-options">
               {%- for option in product.options_with_values -%}
                 {%- assign opt_down = option.name | downcase -%}
                 {%- if opt_down contains 'size' -%}
                   {%- for value in option.values -%}
-                    <option value="{{ value }}">{{ value }}</option>
+                    <button type="button" class="pdp__select-option" data-value="{{ value }}">{{ value }}</button>
                   {%- endfor -%}
                 {%- endif -%}
               {%- endfor -%}
-            </select>
-            <svg class="pdp__dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
           </div>
         {%- endif -%}
 
