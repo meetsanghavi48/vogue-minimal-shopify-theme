@@ -1,40 +1,84 @@
 /* ===========================
-   Variant Selector v3
-   Inline size pills + color swatches + cart
+   Variant Selector v3b
+   Size dropdown → modal, color swatches, cart
    =========================== */
 (function() {
   'use strict';
 
-  const variantsJSON = document.getElementById('product-variants-json');
+  var variantsJSON = document.getElementById('product-variants-json');
   if (!variantsJSON) return;
 
-  const variants = JSON.parse(variantsJSON.textContent.trim());
-  const variantInput = document.getElementById('variant-id');
-  const priceEl = document.getElementById('pdp-price');
-  const addBtn = document.getElementById('btn-add');
-  const addBtnText = document.getElementById('btn-add-text');
+  var variants = JSON.parse(variantsJSON.textContent.trim());
+  var variantInput = document.getElementById('variant-id');
+  var priceEl = document.getElementById('pdp-price');
+  var addBtn = document.getElementById('btn-add');
+  var addBtnText = document.getElementById('btn-add-text');
+  var sizeBtn = document.getElementById('size-trigger');
+  var selectedOptions = {};
+  var sizeSelected = false;
 
-  let selectedOptions = {};
+  // ===== SIZE MODAL =====
+  var backdrop = document.getElementById('size-modal-backdrop');
+  var closeBtn = document.getElementById('size-modal-close');
+  var confirmBtn = document.getElementById('size-modal-confirm');
+  var pills = document.querySelectorAll('.size-modal__pill');
 
-  // ===== SIZE PILLS =====
-  const sizePills = document.querySelectorAll('.pdp__size-pill');
-  sizePills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      const optIdx = pill.dataset.optionIndex;
-      document.querySelectorAll('.pdp__size-pill[data-option-index="' + optIdx + '"]').forEach(function(p) {
-        p.classList.remove('is-selected');
-      });
+  function openModal() {
+    if (!backdrop) return;
+    backdrop.hidden = false;
+    requestAnimationFrame(function() { backdrop.classList.add('is-visible'); });
+  }
+  function closeModal() {
+    if (!backdrop) return;
+    backdrop.classList.remove('is-visible');
+    setTimeout(function() { backdrop.hidden = true; }, 300);
+  }
+
+  if (sizeBtn) sizeBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (backdrop) backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) closeModal();
+  });
+
+  // Size pill selection
+  pills.forEach(function(pill) {
+    pill.addEventListener('click', function() {
+      pills.forEach(function(p) { p.classList.remove('is-selected'); });
       pill.classList.add('is-selected');
-      selectedOptions['option' + (parseInt(optIdx) + 1)] = pill.dataset.value;
-      updateVariant();
+
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm — ' + pill.dataset.value;
+      }
     });
   });
 
+  // Confirm size
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function() {
+      var selected = document.querySelector('.size-modal__pill.is-selected');
+      if (!selected) return;
+
+      var value = selected.dataset.value;
+      var optIdx = selected.dataset.optionIndex;
+      selectedOptions['option' + (parseInt(optIdx) + 1)] = value;
+      sizeSelected = true;
+
+      // Update size button text
+      if (sizeBtn) {
+        sizeBtn.querySelector('.pdp__select-label').textContent = value;
+      }
+
+      updateVariant();
+      closeModal();
+    });
+  }
+
   // ===== COLOR SWATCHES =====
-  const swatches = document.querySelectorAll('.pdp__color-swatch');
-  swatches.forEach(swatch => {
-    swatch.addEventListener('click', () => {
-      const optIdx = swatch.dataset.optionIndex;
+  var swatches = document.querySelectorAll('.pdp__color-swatch');
+  swatches.forEach(function(swatch) {
+    swatch.addEventListener('click', function() {
+      var optIdx = swatch.dataset.optionIndex;
       document.querySelectorAll('.pdp__color-swatch[data-option-index="' + optIdx + '"]').forEach(function(s) {
         s.classList.remove('is-selected');
       });
@@ -75,7 +119,7 @@
         addBtnText.textContent = 'Sold Out';
       } else {
         addBtn.disabled = false;
-        addBtnText.textContent = addBtn.getAttribute('data-original-text') || 'Add to Cart';
+        addBtnText.textContent = addBtn.getAttribute('data-original-text') || 'Add to bag';
       }
     }
   }
@@ -85,17 +129,13 @@
     addBtn.setAttribute('data-original-text', addBtnText.textContent);
 
     addBtn.addEventListener('click', function() {
-      // Check if size required but not selected
-      if (sizePills.length > 0 && !document.querySelector('.pdp__size-pill.is-selected')) {
-        addBtn.classList.add('is-shaking');
-        setTimeout(function() { addBtn.classList.remove('is-shaking'); }, 600);
+      var hasSizes = addBtn.dataset.hasSizes === 'true';
 
-        var sizeSection = document.querySelector('.pdp__size-section');
-        if (sizeSection) {
-          sizeSection.style.outline = '2px solid #ef4444';
-          sizeSection.style.outlineOffset = '4px';
-          sizeSection.style.borderRadius = '8px';
-          setTimeout(function() { sizeSection.style.outline = 'none'; }, 1500);
+      if (hasSizes && !sizeSelected) {
+        // Shake size button
+        if (sizeBtn) {
+          sizeBtn.classList.add('is-shaking');
+          setTimeout(function() { sizeBtn.classList.remove('is-shaking'); }, 600);
         }
         return;
       }
@@ -139,28 +179,6 @@
     });
   }
 
-  // ===== SIZE GUIDE MODAL =====
-  var guideBtn = document.getElementById('size-guide-trigger');
-  var backdrop = document.getElementById('size-modal-backdrop');
-  var closeBtn = document.getElementById('size-modal-close');
-
-  function closeModal() {
-    if (!backdrop) return;
-    backdrop.classList.remove('is-visible');
-    setTimeout(function() { backdrop.hidden = true; }, 300);
-  }
-
-  if (guideBtn && backdrop) {
-    guideBtn.addEventListener('click', function() {
-      backdrop.hidden = false;
-      requestAnimationFrame(function() { backdrop.classList.add('is-visible'); });
-    });
-  }
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (backdrop) backdrop.addEventListener('click', function(e) {
-    if (e.target === backdrop) closeModal();
-  });
-
   // ===== WISHLIST =====
   var wishBtn = document.querySelector('.pdp__wishlist');
   if (wishBtn) wishBtn.addEventListener('click', function() {
@@ -181,7 +199,13 @@
       if (v.option1) selectedOptions.option1 = v.option1;
       if (v.option2) selectedOptions.option2 = v.option2;
       if (v.option3) selectedOptions.option3 = v.option3;
-      sizePills.forEach(function(p) {
+
+      // Mark size as selected and update button
+      if (sizeBtn && v.option1) {
+        sizeBtn.querySelector('.pdp__select-label').textContent = v.option1;
+        sizeSelected = true;
+      }
+      pills.forEach(function(p) {
         if (Object.values(selectedOptions).includes(p.dataset.value)) p.classList.add('is-selected');
       });
       swatches.forEach(function(s) {
