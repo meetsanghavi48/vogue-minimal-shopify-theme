@@ -36,17 +36,15 @@
       var pre = variants.find(function(v) { return v.id === parseInt(vp, 10); });
       if (pre) {
         preselectFromVariant(pre, optionBtns, colorSwatches, selected, sizeLabel, optionIndex);
-        if (addBtn) addBtn.disabled = false;
       }
     }
 
-    // No sizes? Button ready immediately
+    // No sizes? Select first variant immediately
     if (!hasSizes) {
       if (variants.length > 0) {
         selected['0'] = variants[0].option1;
         applyVariant(variants[0]);
       }
-      if (addBtn) addBtn.disabled = false;
     }
 
     // Custom dropdown toggle
@@ -126,12 +124,45 @@
       });
     });
 
-    // Add button click
+    // Add button click — shake size if not selected
     if (addBtn) {
       addBtn.addEventListener('click', function() {
+        // Check if size needs to be selected
+        if (hasSizes && sizeLabel && sizeLabel.textContent === 'Size') {
+          // Shake the size trigger
+          if (sizeTrigger) {
+            sizeTrigger.classList.remove('is-shaking');
+            void sizeTrigger.offsetWidth; // force reflow
+            sizeTrigger.classList.add('is-shaking');
+            setTimeout(function() {
+              sizeTrigger.classList.remove('is-shaking');
+            }, 600);
+          }
+          return;
+        }
         if (this.disabled) return;
         addToCart(this);
       });
+    }
+
+    // Scroll pressure effect on sheet
+    var sheet = document.querySelector('.pdp__sheet');
+    if (sheet) {
+      var lastScrollY = 0;
+      var pressTimer = null;
+      window.addEventListener('scroll', function() {
+        var sy = window.scrollY;
+        if (sy > 20 && sy > lastScrollY) {
+          sheet.classList.add('is-pressed');
+          clearTimeout(pressTimer);
+          pressTimer = setTimeout(function() {
+            sheet.classList.remove('is-pressed');
+          }, 150);
+        } else {
+          sheet.classList.remove('is-pressed');
+        }
+        lastScrollY = sy;
+      }, { passive: true });
     }
 
     function preselectFromVariant(variant, opts, swatches, sel, label, sizeIdx) {
