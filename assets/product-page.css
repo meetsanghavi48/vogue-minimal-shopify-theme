@@ -389,6 +389,7 @@
 }
 
 /* ---- Scroll reveal animation ---- */
+/* Reveal animation — disabled inside Shopify editor */
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(24px);
@@ -398,6 +399,11 @@
 .reveal-on-scroll.is-revealed {
   opacity: 1;
   transform: translateY(0);
+}
+/* Show everything in Shopify editor */
+.shopify-design-mode .reveal-on-scroll {
+  opacity: 1;
+  transform: none;
 }
 
 /* ===========================
