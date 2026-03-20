@@ -389,24 +389,9 @@
 }
 
 /* ---- Scroll reveal animation ---- */
-/* Reveal animation — disabled inside Shopify editor */
 .reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-on-scroll.is-revealed {
   opacity: 1;
-  transform: translateY(0);
-}
-/* Show everything in Shopify editor */
-.shopify-design-mode .reveal-on-scroll,
-html.shopify-design-mode .reveal-on-scroll,
-body.shopify-design-mode .reveal-on-scroll,
-[data-shopify-editor-section] .reveal-on-scroll {
-  opacity: 1 !important;
-  transform: none !important;
+  transform: none;
 }
 
 /* ===========================
