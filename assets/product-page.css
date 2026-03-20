@@ -166,7 +166,7 @@
   border-radius: var(--radius-full);
 }
 .pdp__sheet-content {
-  padding: var(--space-1) var(--space-4) var(--space-4);
+  padding: var(--space-1) var(--space-4) 5px;
 }
 
 /* ===========================
