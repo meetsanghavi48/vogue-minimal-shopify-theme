@@ -139,25 +139,13 @@
           {%- endif -%}
         {%- endfor -%}
 
-      {%- comment -%} Bottom row: Custom size picker + Add button {%- endcomment -%}
+      {%- comment -%} Bottom row: Size button + Add button {%- endcomment -%}
       <div class="pdp__bottom-row">
         {%- if has_sizes -%}
-          <div class="pdp__custom-select" id="custom-size-select" data-option-index="{{ size_option_index }}">
-            <button type="button" class="pdp__select-trigger" id="size-trigger">
-              <span class="pdp__select-label">Size</span>
-              <svg class="pdp__select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="pdp__select-dropdown" id="size-options">
-              {%- for option in product.options_with_values -%}
-                {%- assign opt_down = option.name | downcase -%}
-                {%- if opt_down contains 'size' -%}
-                  {%- for value in option.values -%}
-                    <button type="button" class="pdp__select-option" data-value="{{ value }}">{{ value }}</button>
-                  {%- endfor -%}
-                {%- endif -%}
-              {%- endfor -%}
-            </div>
-          </div>
+          <button type="button" class="pdp__size-btn" id="size-trigger" data-option-index="{{ size_option_index }}">
+            <span class="pdp__select-label">Size</span>
+            <svg class="pdp__select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
         {%- endif -%}
 
         <button type="button" class="pdp__add-btn" id="btn-add"
@@ -169,6 +157,51 @@
 
     </div>
   </div>
+
+  {%- comment -%} Size Selection Modal Overlay {%- endcomment -%}
+  {%- if has_sizes -%}
+    <div class="size-modal__backdrop" id="size-modal-backdrop" hidden>
+      <div class="size-modal" id="size-modal">
+        <div class="size-modal__header">
+          <h2 class="size-modal__title">Select Size</h2>
+          <button type="button" class="size-modal__close" id="size-modal-close" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        {%- comment -%} Size Chart Area — loads from connected page {%- endcomment -%}
+        {%- if section.settings.size_chart_page != blank -%}
+          <div class="size-modal__chart">
+            <h3 class="size-modal__chart-title">Size Guide</h3>
+            <div class="size-modal__chart-content">
+              {{ pages[section.settings.size_chart_page].content }}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Size Pills {%- endcomment -%}
+        <div class="size-modal__sizes" id="size-modal-options">
+          <h3 class="size-modal__sizes-title">Choose your size</h3>
+          <div class="size-modal__pills">
+            {%- for option in product.options_with_values -%}
+              {%- assign opt_down = option.name | downcase -%}
+              {%- if opt_down contains 'size' -%}
+                {%- for value in option.values -%}
+                  <button type="button" class="size-modal__pill" data-value="{{ value }}" data-option-index="{{ forloop.parentloop.index0 }}">
+                    {{ value }}
+                  </button>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <button type="button" class="size-modal__confirm" id="size-modal-confirm" disabled>
+          Select a size
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
 
 </section>
 
@@ -185,9 +218,9 @@
   "name": "Product Page",
   "settings": [
     {
-      "type": "url",
-      "id": "size_chart_url",
-      "label": "Size chart page URL"
+      "type": "page",
+      "id": "size_chart_page",
+      "label": "Size chart page"
     },
     {
       "type": "text",

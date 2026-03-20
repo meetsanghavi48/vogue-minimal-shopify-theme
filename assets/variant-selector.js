@@ -12,15 +12,21 @@
     catch(e) { return; }
 
     var addBtn = document.getElementById('btn-add');
-    var customSelect = document.getElementById('custom-size-select');
     var sizeTrigger = document.getElementById('size-trigger');
-    var sizeOptions = document.getElementById('size-options');
     var sizeLabel = sizeTrigger ? sizeTrigger.querySelector('.pdp__select-label') : null;
-    var optionBtns = sizeOptions ? sizeOptions.querySelectorAll('.pdp__select-option') : [];
     var colorSwatches = document.querySelectorAll('.pdp__color-swatch');
     var selected = {};
     var hasSizes = addBtn && addBtn.dataset.hasSizes === 'true';
-    var optionIndex = customSelect ? customSelect.dataset.optionIndex : '0';
+    var optionIndex = sizeTrigger ? sizeTrigger.dataset.optionIndex : '0';
+    var sizeSelected = false;
+
+    // Modal elements
+    var backdrop = document.getElementById('size-modal-backdrop');
+    var modal = document.getElementById('size-modal');
+    var closeBtn = document.getElementById('size-modal-close');
+    var confirmBtn = document.getElementById('size-modal-confirm');
+    var pills = backdrop ? backdrop.querySelectorAll('.size-modal__pill') : [];
+    var tempSize = null;
 
     // Init color with first value
     colorSwatches.forEach(function(btn) {
@@ -35,7 +41,7 @@
     if (vp) {
       var pre = variants.find(function(v) { return v.id === parseInt(vp, 10); });
       if (pre) {
-        preselectFromVariant(pre, optionBtns, colorSwatches, selected, sizeLabel, optionIndex);
+        preselectFromVariant(pre);
       }
     }
 
@@ -47,62 +53,107 @@
       }
     }
 
-    // Custom dropdown toggle
-    if (sizeTrigger && sizeOptions) {
-      sizeTrigger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var isOpen = sizeOptions.classList.contains('is-open');
-        if (isOpen) {
-          closeDropdown();
-        } else {
-          sizeOptions.classList.add('is-open');
-          sizeTrigger.classList.add('is-open');
-        }
-      });
-
-      // Close on click outside
-      document.addEventListener('click', function(e) {
-        if (customSelect && !customSelect.contains(e.target)) {
-          closeDropdown();
-        }
-      });
-
-      function closeDropdown() {
-        sizeOptions.classList.remove('is-open');
-        sizeTrigger.classList.remove('is-open');
-      }
-
-      // Option click
-      optionBtns.forEach(function(opt) {
-        opt.addEventListener('click', function() {
-          var val = this.dataset.value;
-
-          // Update UI
-          optionBtns.forEach(function(o) { o.classList.remove('is-selected'); });
-          this.classList.add('is-selected');
-          if (sizeLabel) sizeLabel.textContent = val;
-
-          selected[optionIndex] = val;
-          closeDropdown();
-
-          var match = findVariant(variants, selected);
-          if (match) {
-            applyVariant(match);
-            if (addBtn) {
-              addBtn.disabled = !match.available;
-              addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
-            }
-          } else {
-            if (addBtn) {
-              addBtn.disabled = true;
-              addBtn.querySelector('span').textContent = 'Sold Out';
-            }
-          }
-        });
+    // ---- Modal open/close ----
+    if (sizeTrigger && backdrop) {
+      sizeTrigger.addEventListener('click', function() {
+        openModal();
       });
     }
 
-    // Color swatch click
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        closeModal();
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', function(e) {
+        if (e.target === backdrop) closeModal();
+      });
+    }
+
+    // ESC to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && backdrop && !backdrop.hidden) {
+        closeModal();
+      }
+    });
+
+    function openModal() {
+      if (!backdrop) return;
+      tempSize = null;
+      backdrop.hidden = false;
+      // Force reflow then animate
+      void backdrop.offsetWidth;
+      backdrop.classList.add('is-visible');
+      document.body.style.overflow = 'hidden';
+
+      // Highlight currently selected pill if any
+      pills.forEach(function(p) {
+        p.classList.remove('is-selected');
+        if (sizeSelected && p.dataset.value === selected[optionIndex]) {
+          p.classList.add('is-selected');
+          tempSize = p.dataset.value;
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirm — ' + tempSize;
+          }
+        }
+      });
+    }
+
+    function closeModal() {
+      if (!backdrop) return;
+      backdrop.classList.remove('is-visible');
+      document.body.style.overflow = '';
+      setTimeout(function() {
+        backdrop.hidden = true;
+      }, 300);
+    }
+
+    // ---- Pill click inside modal ----
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        tempSize = this.dataset.value;
+        pills.forEach(function(p) { p.classList.remove('is-selected'); });
+        this.classList.add('is-selected');
+
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Confirm — ' + tempSize;
+        }
+      });
+    });
+
+    // ---- Confirm button ----
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function() {
+        if (!tempSize) return;
+
+        selected[optionIndex] = tempSize;
+        sizeSelected = true;
+
+        // Update the size button label
+        if (sizeLabel) sizeLabel.textContent = tempSize;
+
+        // Find variant
+        var match = findVariant(variants, selected);
+        if (match) {
+          applyVariant(match);
+          if (addBtn) {
+            addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
+          }
+        } else {
+          if (addBtn) {
+            addBtn.querySelector('span').textContent = 'Sold Out';
+          }
+        }
+
+        closeModal();
+      });
+    }
+
+    // ---- Color swatch click ----
     colorSwatches.forEach(function(btn) {
       btn.addEventListener('click', function() {
         var idx = this.dataset.optionIndex;
@@ -113,10 +164,8 @@
         var match = findVariant(variants, selected);
         if (match) {
           applyVariant(match);
-          var sizeChosen = sizeLabel && sizeLabel.textContent !== 'Size';
-          if (!hasSizes || sizeChosen) {
+          if (sizeSelected || !hasSizes) {
             if (addBtn) {
-              addBtn.disabled = !match.available;
               addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
             }
           }
@@ -124,15 +173,14 @@
       });
     });
 
-    // Add button click — shake size if not selected
+    // ---- Add button click — shake size if not selected, else open modal ----
     if (addBtn) {
       addBtn.addEventListener('click', function() {
-        // Check if size needs to be selected
-        if (hasSizes && sizeLabel && sizeLabel.textContent === 'Size') {
-          // Shake the size trigger
+        if (hasSizes && !sizeSelected) {
+          // Shake the size button
           if (sizeTrigger) {
             sizeTrigger.classList.remove('is-shaking');
-            void sizeTrigger.offsetWidth; // force reflow
+            void sizeTrigger.offsetWidth;
             sizeTrigger.classList.add('is-shaking');
             setTimeout(function() {
               sizeTrigger.classList.remove('is-shaking');
@@ -145,7 +193,7 @@
       });
     }
 
-    // Scroll pressure effect on sheet
+    // ---- Scroll pressure effect ----
     var sheet = document.querySelector('.pdp__sheet');
     if (sheet) {
       var lastScrollY = 0;
@@ -165,33 +213,29 @@
       }, { passive: true });
     }
 
-    function preselectFromVariant(variant, opts, swatches, sel, label, sizeIdx) {
+    function preselectFromVariant(variant) {
       if (variant.option1) {
-        sel['0'] = variant.option1;
-        opts.forEach(function(o) {
-          if (sizeIdx === '0' && o.dataset.value === variant.option1) {
-            o.classList.add('is-selected');
-            if (label) label.textContent = variant.option1;
-          }
-        });
-        swatches.forEach(function(s) {
+        selected['0'] = variant.option1;
+        if (optionIndex === '0' && sizeLabel) {
+          sizeLabel.textContent = variant.option1;
+          sizeSelected = true;
+        }
+        colorSwatches.forEach(function(s) {
           if (s.dataset.optionIndex === '0' && s.dataset.value === variant.option1) {
-            swatches.forEach(function(x) { x.classList.remove('is-selected'); });
+            colorSwatches.forEach(function(x) { x.classList.remove('is-selected'); });
             s.classList.add('is-selected');
           }
         });
       }
       if (variant.option2) {
-        sel['1'] = variant.option2;
-        opts.forEach(function(o) {
-          if (sizeIdx === '1' && o.dataset.value === variant.option2) {
-            o.classList.add('is-selected');
-            if (label) label.textContent = variant.option2;
-          }
-        });
+        selected['1'] = variant.option2;
+        if (optionIndex === '1' && sizeLabel) {
+          sizeLabel.textContent = variant.option2;
+          sizeSelected = true;
+        }
       }
       if (variant.option3) {
-        sel['2'] = variant.option3;
+        selected['2'] = variant.option3;
       }
     }
   }
