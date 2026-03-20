@@ -1,320 +1,201 @@
+/* ===========================
+   Variant Selector v3
+   Inline size pills + color swatches + cart
+   =========================== */
 (function() {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', init);
+  const variantsJSON = document.getElementById('product-variants-json');
+  if (!variantsJSON) return;
 
-  function init() {
-    var jsonEl = document.getElementById('product-variants-json');
-    if (!jsonEl) return;
+  const variants = JSON.parse(variantsJSON.textContent.trim());
+  const variantInput = document.getElementById('variant-id');
+  const priceEl = document.getElementById('pdp-price');
+  const addBtn = document.getElementById('btn-add');
+  const addBtnText = document.getElementById('btn-add-text');
 
-    var variants;
-    try { variants = JSON.parse(jsonEl.textContent); }
-    catch(e) { return; }
+  let selectedOptions = {};
 
-    var addBtn = document.getElementById('btn-add');
-    var sizeTrigger = document.getElementById('size-trigger');
-    var sizeLabel = sizeTrigger ? sizeTrigger.querySelector('.pdp__select-label') : null;
-    var colorSwatches = document.querySelectorAll('.pdp__color-swatch');
-    var selected = {};
-    var hasSizes = addBtn && addBtn.dataset.hasSizes === 'true';
-    var optionIndex = sizeTrigger ? sizeTrigger.dataset.optionIndex : '0';
-    var sizeSelected = false;
-
-    // Modal elements
-    var backdrop = document.getElementById('size-modal-backdrop');
-    var modal = document.getElementById('size-modal');
-    var closeBtn = document.getElementById('size-modal-close');
-    var confirmBtn = document.getElementById('size-modal-confirm');
-    var pills = backdrop ? backdrop.querySelectorAll('.size-modal__pill') : [];
-    var tempSize = null;
-
-    // Init color with first value
-    colorSwatches.forEach(function(btn) {
-      if (btn.classList.contains('is-selected')) {
-        selected[btn.dataset.optionIndex] = btn.dataset.value;
-      }
-    });
-
-    // URL variant preselection
-    var params = new URLSearchParams(window.location.search);
-    var vp = params.get('variant');
-    if (vp) {
-      var pre = variants.find(function(v) { return v.id === parseInt(vp, 10); });
-      if (pre) {
-        preselectFromVariant(pre);
-      }
-    }
-
-    // No sizes? Select first variant immediately
-    if (!hasSizes) {
-      if (variants.length > 0) {
-        selected['0'] = variants[0].option1;
-        applyVariant(variants[0]);
-      }
-    }
-
-    // ---- Modal open/close ----
-    if (sizeTrigger && backdrop) {
-      sizeTrigger.addEventListener('click', function() {
-        openModal();
-      });
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function() {
-        closeModal();
-      });
-    }
-
-    if (backdrop) {
-      backdrop.addEventListener('click', function(e) {
-        if (e.target === backdrop) closeModal();
-      });
-    }
-
-    // ESC to close
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && backdrop && !backdrop.hidden) {
-        closeModal();
-      }
-    });
-
-    function openModal() {
-      if (!backdrop) return;
-      tempSize = null;
-      backdrop.hidden = false;
-      // Force reflow then animate
-      void backdrop.offsetWidth;
-      backdrop.classList.add('is-visible');
-      document.body.style.overflow = 'hidden';
-
-      // Highlight currently selected pill if any
-      pills.forEach(function(p) {
+  // ===== SIZE PILLS =====
+  const sizePills = document.querySelectorAll('.pdp__size-pill');
+  sizePills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const optIdx = pill.dataset.optionIndex;
+      document.querySelectorAll('.pdp__size-pill[data-option-index="' + optIdx + '"]').forEach(function(p) {
         p.classList.remove('is-selected');
-        if (sizeSelected && p.dataset.value === selected[optionIndex]) {
-          p.classList.add('is-selected');
-          tempSize = p.dataset.value;
-          if (confirmBtn) {
-            confirmBtn.disabled = false;
-            confirmBtn.textContent = 'Confirm — ' + tempSize;
-          }
-        }
       });
-    }
+      pill.classList.add('is-selected');
+      selectedOptions['option' + (parseInt(optIdx) + 1)] = pill.dataset.value;
+      updateVariant();
+    });
+  });
 
-    function closeModal() {
-      if (!backdrop) return;
-      backdrop.classList.remove('is-visible');
-      document.body.style.overflow = '';
-      setTimeout(function() {
-        backdrop.hidden = true;
-      }, 300);
-    }
+  // ===== COLOR SWATCHES =====
+  const swatches = document.querySelectorAll('.pdp__color-swatch');
+  swatches.forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      const optIdx = swatch.dataset.optionIndex;
+      document.querySelectorAll('.pdp__color-swatch[data-option-index="' + optIdx + '"]').forEach(function(s) {
+        s.classList.remove('is-selected');
+      });
+      swatch.classList.add('is-selected');
+      selectedOptions['option' + (parseInt(optIdx) + 1)] = swatch.dataset.value;
+      updateVariant();
+    });
+  });
 
-    // ---- Pill click inside modal ----
-    pills.forEach(function(pill) {
-      pill.addEventListener('click', function() {
-        tempSize = this.dataset.value;
-        pills.forEach(function(p) { p.classList.remove('is-selected'); });
-        this.classList.add('is-selected');
-
-        if (confirmBtn) {
-          confirmBtn.disabled = false;
-          confirmBtn.textContent = 'Confirm — ' + tempSize;
-        }
+  // ===== FIND MATCHING VARIANT =====
+  function updateVariant() {
+    var match = variants.find(function(v) {
+      return Object.keys(selectedOptions).every(function(key) {
+        return v[key] === selectedOptions[key];
       });
     });
 
-    // ---- Confirm button ----
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', function() {
-        if (!tempSize) return;
+    if (match) {
+      variantInput.value = match.id;
+      if (priceEl) priceEl.textContent = formatMoney(match.price);
 
-        selected[optionIndex] = tempSize;
-        sizeSelected = true;
-
-        // Update the size button label
-        if (sizeLabel) sizeLabel.textContent = tempSize;
-
-        // Find variant
-        var match = findVariant(variants, selected);
-        if (match) {
-          applyVariant(match);
-          if (addBtn) {
-            addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
-          }
+      var compareEl = document.querySelector('.pdp__compare-price');
+      if (compareEl) {
+        if (match.compare_at_price && match.compare_at_price > match.price) {
+          compareEl.textContent = formatMoney(match.compare_at_price);
+          compareEl.style.display = '';
         } else {
-          if (addBtn) {
-            addBtn.querySelector('span').textContent = 'Sold Out';
-          }
-        }
-
-        closeModal();
-      });
-    }
-
-    // ---- Color swatch click ----
-    colorSwatches.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var idx = this.dataset.optionIndex;
-        colorSwatches.forEach(function(s) { s.classList.remove('is-selected'); });
-        this.classList.add('is-selected');
-        selected[idx] = this.dataset.value;
-
-        var match = findVariant(variants, selected);
-        if (match) {
-          applyVariant(match);
-          if (sizeSelected || !hasSizes) {
-            if (addBtn) {
-              addBtn.querySelector('span').textContent = match.available ? 'Add' : 'Sold Out';
-            }
-          }
-        }
-      });
-    });
-
-    // ---- Add button click — shake size if not selected, else open modal ----
-    if (addBtn) {
-      addBtn.addEventListener('click', function() {
-        if (hasSizes && !sizeSelected) {
-          // Shake the size button
-          if (sizeTrigger) {
-            sizeTrigger.classList.remove('is-shaking');
-            void sizeTrigger.offsetWidth;
-            sizeTrigger.classList.add('is-shaking');
-            setTimeout(function() {
-              sizeTrigger.classList.remove('is-shaking');
-            }, 600);
-          }
-          return;
-        }
-        if (this.disabled) return;
-        addToCart(this);
-      });
-    }
-
-    // ---- Scroll pressure effect ----
-    var sheet = document.querySelector('.pdp__sheet');
-    if (sheet) {
-      var lastScrollY = 0;
-      var pressTimer = null;
-      window.addEventListener('scroll', function() {
-        var sy = window.scrollY;
-        if (sy > 20 && sy > lastScrollY) {
-          sheet.classList.add('is-pressed');
-          clearTimeout(pressTimer);
-          pressTimer = setTimeout(function() {
-            sheet.classList.remove('is-pressed');
-          }, 150);
-        } else {
-          sheet.classList.remove('is-pressed');
-        }
-        lastScrollY = sy;
-      }, { passive: true });
-    }
-
-    function preselectFromVariant(variant) {
-      if (variant.option1) {
-        selected['0'] = variant.option1;
-        if (optionIndex === '0' && sizeLabel) {
-          sizeLabel.textContent = variant.option1;
-          sizeSelected = true;
-        }
-        colorSwatches.forEach(function(s) {
-          if (s.dataset.optionIndex === '0' && s.dataset.value === variant.option1) {
-            colorSwatches.forEach(function(x) { x.classList.remove('is-selected'); });
-            s.classList.add('is-selected');
-          }
-        });
-      }
-      if (variant.option2) {
-        selected['1'] = variant.option2;
-        if (optionIndex === '1' && sizeLabel) {
-          sizeLabel.textContent = variant.option2;
-          sizeSelected = true;
+          compareEl.style.display = 'none';
         }
       }
-      if (variant.option3) {
-        selected['2'] = variant.option3;
-      }
-    }
-  }
 
-  function findVariant(variants, sel) {
-    return variants.find(function(v) {
-      var ok = true;
-      if (sel['0'] && v.option1 !== sel['0']) ok = false;
-      if (sel['1'] && v.option2 !== sel['1']) ok = false;
-      if (sel['2'] && v.option3 !== sel['2']) ok = false;
-      return ok;
-    });
-  }
+      var url = new URL(window.location);
+      url.searchParams.set('variant', match.id);
+      history.replaceState(null, '', url);
 
-  function applyVariant(variant) {
-    document.querySelectorAll('input[name="id"]').forEach(function(i) { i.value = variant.id; });
-
-    var priceEl = document.getElementById('pdp-price');
-    if (priceEl) {
-      if (window.Shopify && window.Shopify.formatMoney) {
-        priceEl.textContent = Shopify.formatMoney(variant.price);
+      if (!match.available) {
+        addBtn.disabled = true;
+        addBtnText.textContent = 'Sold Out';
       } else {
-        priceEl.textContent = '\u20b9 ' + (variant.price / 100).toFixed(2);
+        addBtn.disabled = false;
+        addBtnText.textContent = addBtn.getAttribute('data-original-text') || 'Add to Cart';
       }
     }
-
-    var url = new URL(window.location.href);
-    url.searchParams.set('variant', variant.id);
-    window.history.replaceState({}, '', url.toString());
-
-    document.dispatchEvent(new CustomEvent('variant:changed', { detail: variant }));
   }
 
-  function addToCart(button) {
-    var input = document.getElementById('variant-id');
-    if (!input) input = document.querySelector('input[name="id"]');
-    var id = input ? input.value : null;
-    if (!id || button.disabled) return;
+  // ===== ADD TO CART =====
+  if (addBtn) {
+    addBtn.setAttribute('data-original-text', addBtnText.textContent);
 
-    var spanEl = button.querySelector('span');
-    var originalText = spanEl ? spanEl.textContent : 'Add';
-    button.disabled = true;
-    if (spanEl) spanEl.textContent = 'Adding...';
+    addBtn.addEventListener('click', function() {
+      // Check if size required but not selected
+      if (sizePills.length > 0 && !document.querySelector('.pdp__size-pill.is-selected')) {
+        addBtn.classList.add('is-shaking');
+        setTimeout(function() { addBtn.classList.remove('is-shaking'); }, 600);
 
-    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+        var sizeSection = document.querySelector('.pdp__size-section');
+        if (sizeSection) {
+          sizeSection.style.outline = '2px solid #ef4444';
+          sizeSection.style.outlineOffset = '4px';
+          sizeSection.style.borderRadius = '8px';
+          setTimeout(function() { sizeSection.style.outline = 'none'; }, 1500);
+        }
+        return;
+      }
 
-    fetch(root + 'cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ items: [{ id: parseInt(id, 10), quantity: 1 }] })
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('Failed');
-      return r.json();
-    })
-    .then(function() {
-      if (spanEl) spanEl.textContent = 'Added!';
-      button.classList.add('is-success');
+      if (addBtn.disabled) return;
 
-      fetch(root + 'cart.json')
-        .then(function(r) { return r.json(); })
-        .then(function(cart) {
-          document.querySelectorAll('#cart-count, .header__cart-count').forEach(function(el) {
-            el.textContent = cart.item_count;
-          });
+      var variantId = variantInput.value;
+      var originalText = addBtnText.textContent;
+      addBtn.disabled = true;
+      addBtnText.textContent = 'Adding...';
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Failed');
+        return res.json();
+      })
+      .then(function() {
+        addBtn.classList.add('is-success');
+        addBtnText.textContent = 'Added!';
+
+        fetch('/cart.json').then(function(r) { return r.json(); }).then(function(cart) {
+          var countEl = document.querySelector('.header__cart-count');
+          if (countEl) countEl.textContent = cart.item_count;
         });
 
-      setTimeout(function() {
-        if (spanEl) spanEl.textContent = originalText;
-        button.disabled = false;
-        button.classList.remove('is-success');
-      }, 2500);
-    })
-    .catch(function() {
-      if (spanEl) spanEl.textContent = 'Error';
-      setTimeout(function() {
-        if (spanEl) spanEl.textContent = originalText;
-        button.disabled = false;
-      }, 2500);
+        setTimeout(function() {
+          addBtn.classList.remove('is-success');
+          addBtn.disabled = false;
+          addBtnText.textContent = originalText;
+        }, 2000);
+      })
+      .catch(function() {
+        addBtnText.textContent = 'Error - retry';
+        addBtn.disabled = false;
+        setTimeout(function() { addBtnText.textContent = originalText; }, 2000);
+      });
     });
   }
+
+  // ===== SIZE GUIDE MODAL =====
+  var guideBtn = document.getElementById('size-guide-trigger');
+  var backdrop = document.getElementById('size-modal-backdrop');
+  var closeBtn = document.getElementById('size-modal-close');
+
+  function closeModal() {
+    if (!backdrop) return;
+    backdrop.classList.remove('is-visible');
+    setTimeout(function() { backdrop.hidden = true; }, 300);
+  }
+
+  if (guideBtn && backdrop) {
+    guideBtn.addEventListener('click', function() {
+      backdrop.hidden = false;
+      requestAnimationFrame(function() { backdrop.classList.add('is-visible'); });
+    });
+  }
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (backdrop) backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) closeModal();
+  });
+
+  // ===== WISHLIST =====
+  var wishBtn = document.querySelector('.pdp__wishlist');
+  if (wishBtn) wishBtn.addEventListener('click', function() {
+    wishBtn.classList.toggle('is-liked');
+  });
+
+  // ===== FORMAT MONEY (INR) =====
+  function formatMoney(cents) {
+    var amount = (cents / 100).toFixed(2);
+    return '\u20B9 ' + amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  // ===== PRE-SELECT FROM URL =====
+  var urlVariant = new URLSearchParams(window.location.search).get('variant');
+  if (urlVariant) {
+    var v = variants.find(function(vr) { return vr.id === parseInt(urlVariant); });
+    if (v) {
+      if (v.option1) selectedOptions.option1 = v.option1;
+      if (v.option2) selectedOptions.option2 = v.option2;
+      if (v.option3) selectedOptions.option3 = v.option3;
+      sizePills.forEach(function(p) {
+        if (Object.values(selectedOptions).includes(p.dataset.value)) p.classList.add('is-selected');
+      });
+      swatches.forEach(function(s) {
+        if (Object.values(selectedOptions).includes(s.dataset.value)) s.classList.add('is-selected');
+      });
+    }
+  }
+
+  // ===== HEADER SCROLL =====
+  var header = document.querySelector('.site-header');
+  if (header) {
+    window.addEventListener('scroll', function() {
+      header.classList.toggle('is-scrolled', window.scrollY > 50);
+    }, { passive: true });
+  }
+
 })();
