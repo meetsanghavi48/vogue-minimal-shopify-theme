@@ -98,7 +98,7 @@
         {%- if section.blocks.size > 0 -%}
           {%- assign feature_blocks = section.blocks | where: "type", "feature" -%}
           {%- if feature_blocks.size > 0 -%}
-            <div class="pdp__features-card" style="--features-bg: {{ section.settings.features_bg_color }}">
+            <div class="pdp__features-card">
               {%- for block in feature_blocks -%}
                 <div class="pdp__feature" {{ block.shopify_attributes }}>
                   <div class="pdp__feature-icon">
