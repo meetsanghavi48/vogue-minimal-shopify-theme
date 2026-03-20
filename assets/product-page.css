@@ -152,7 +152,7 @@
   background: var(--color-accent);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -8px 40px rgba(0,0,0,0.08);
-  min-height: 260px;
+  min-height: auto;
   transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .pdp__sheet-handle {
