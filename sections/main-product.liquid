@@ -11,11 +11,6 @@
   {%- endif -%}
 {%- endfor -%}
 
-{%- assign discount_pct = 0 -%}
-{%- if current_variant.compare_at_price > current_variant.price -%}
-  {%- assign diff = current_variant.compare_at_price | minus: current_variant.price -%}
-  {%- assign discount_pct = diff | times: 100 | divided_by: current_variant.compare_at_price -%}
-{%- endif -%}
 
 <section class="pdp" data-section-id="{{ section.id }}">
 
@@ -69,9 +64,6 @@
       </div>
     {%- endif -%}
 
-    {%- if discount_pct > 0 -%}
-      <div class="pdp__badge">-{{ discount_pct }}%</div>
-    {%- endif -%}
   </div>
 
   {%- comment -%}
@@ -90,11 +82,10 @@
 
         <div class="pdp__meta-row">
           <div class="pdp__price-block">
-            <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
             {%- if current_variant.compare_at_price > current_variant.price -%}
               <s class="pdp__compare-price">{{ current_variant.compare_at_price | money }}</s>
-              <span class="pdp__save-badge">Save {{ discount_pct }}%</span>
             {%- endif -%}
+            <span class="pdp__price" id="pdp-price">{{ current_variant.price | money }}</span>
           </div>
           <div class="pdp__rating">
             <span class="jdgm-preview-badge" data-id="{{ product.id }}">
