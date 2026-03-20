@@ -174,154 +174,6 @@
         </div>
       </div>
 
-      <!-- DEBUG TEST -->
-      <div style="padding:20px;background:#ffe0e0;border-radius:12px;margin-top:16px;text-align:center;font-weight:700;">
-        TEST: If you can see this red box, scroll sections are rendering.
-      </div>
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 1 — URGENCY + SOCIAL PROOF
-        =============================================
-      {%- endcomment -%}
-      <div class="pdp__scroll-section pdp__social-proof reveal-on-scroll" data-delay="0">
-        <div class="pdp__proof-items">
-          <div class="pdp__proof-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            <span><strong id="viewer-count">{{ section.settings.viewers_min | default: 12 }}</strong> people viewing now</span>
-          </div>
-          <div class="pdp__proof-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span><strong id="recent-sold">{{ section.settings.sold_count | default: 47 }}</strong> sold in last 24h</span>
-          </div>
-          <div class="pdp__proof-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Order within <strong id="countdown-timer">2h 34m</strong> for dispatch today</span>
-          </div>
-        </div>
-      </div>
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 2 — THE PROMISE (BOLD STATEMENT)
-        =============================================
-      {%- endcomment -%}
-      {%- if section.settings.promise_heading != blank -%}
-        <div class="pdp__scroll-section pdp__promise reveal-on-scroll" data-delay="100">
-          <div class="pdp__promise-inner">
-            <span class="pdp__promise-eyebrow">{{ section.settings.promise_eyebrow | default: 'The Promise' }}</span>
-            <h2 class="pdp__promise-heading">{{ section.settings.promise_heading }}</h2>
-            {%- if section.settings.promise_subtext != blank -%}
-              <p class="pdp__promise-sub">{{ section.settings.promise_subtext }}</p>
-            {%- endif -%}
-          </div>
-          {%- if section.settings.promise_image != blank -%}
-            <img src="{{ section.settings.promise_image | image_url: width: 800 }}" alt="" class="pdp__promise-img" loading="lazy">
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 3 — TRUST STACK
-        =============================================
-      {%- endcomment -%}
-      <div class="pdp__scroll-section pdp__trust-stack reveal-on-scroll" data-delay="0">
-        {%- assign trust_blocks = section.blocks | where: "type", "trust_item" -%}
-        {%- if trust_blocks.size > 0 -%}
-          {%- for block in trust_blocks -%}
-            <div class="pdp__trust-item reveal-on-scroll" data-delay="{{ forloop.index0 | times: 80 }}" {{ block.shopify_attributes }}>
-              <div class="pdp__trust-icon">
-                {%- if block.settings.custom_icon != blank -%}
-                  <img src="{{ block.settings.custom_icon | image_url: width: 64 }}" alt="" width="28" height="28" loading="lazy">
-                {%- else -%}
-                  {%- case block.settings.icon -%}
-                    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-                    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    {%- when 'credit-card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
-                  {%- endcase -%}
-                {%- endif -%}
-              </div>
-              <div class="pdp__trust-text">
-                <strong>{{ block.settings.title }}</strong>
-                {%- if block.settings.subtitle != blank -%}
-                  <span>{{ block.settings.subtitle }}</span>
-                {%- endif -%}
-              </div>
-            </div>
-          {%- endfor -%}
-        {%- else -%}
-          <div class="pdp__trust-item reveal-on-scroll" data-delay="0">
-            <div class="pdp__trust-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-            <div class="pdp__trust-text"><strong>Free Shipping</strong><span>All over India</span></div>
-          </div>
-          <div class="pdp__trust-item reveal-on-scroll" data-delay="80">
-            <div class="pdp__trust-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></div>
-            <div class="pdp__trust-text"><strong>7 Day Returns</strong><span>Free return shipping</span></div>
-          </div>
-          <div class="pdp__trust-item reveal-on-scroll" data-delay="160">
-            <div class="pdp__trust-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
-            <div class="pdp__trust-text"><strong>COD Available</strong><span>Pay on delivery</span></div>
-          </div>
-        {%- endif -%}
-      </div>
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 4 — PRODUCT DESCRIPTION
-        =============================================
-      {%- endcomment -%}
-      {%- if product.description != blank -%}
-        <div class="pdp__scroll-section pdp__description reveal-on-scroll" data-delay="0">
-          <button type="button" class="pdp__desc-toggle" id="desc-toggle" aria-expanded="false">
-            <span class="pdp__desc-toggle-label">About this product</span>
-            <svg class="pdp__desc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="pdp__desc-content" id="desc-content">
-            <div class="pdp__desc-text rte">
-              {{ product.description }}
-            </div>
-          </div>
-        </div>
-      {%- endif -%}
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 5 — CUSTOMER REVIEWS
-        =============================================
-      {%- endcomment -%}
-      <div class="pdp__scroll-section pdp__reviews reveal-on-scroll" data-delay="0">
-        <h3 class="pdp__section-title">What customers say</h3>
-        <div id="judgeme_product_reviews" data-id="{{ product.id }}">
-          {{ product.metafields.judgeme.widget }}
-        </div>
-      </div>
-
-      {%- comment -%}
-        =============================================
-        SCROLL SECTION 6 — YOU MAY ALSO LIKE
-        =============================================
-      {%- endcomment -%}
-      <div class="pdp__scroll-section pdp__related reveal-on-scroll" data-delay="0">
-        <h3 class="pdp__section-title">You may also like</h3>
-        <div class="pdp__related-grid" id="pdp-related">
-          {%- for rec in recommendations.products limit: 4 -%}
-            <a href="{{ rec.url }}" class="pdp__rec-card">
-              <div class="pdp__rec-img-wrap">
-                <img src="{{ rec.featured_image | image_url: width: 400 }}" alt="{{ rec.title | escape }}" loading="lazy" class="pdp__rec-img">
-              </div>
-              <div class="pdp__rec-info">
-                <span class="pdp__rec-title">{{ rec.title }}</span>
-                <span class="pdp__rec-price">{{ rec.price | money }}</span>
-              </div>
-            </a>
-          {%- endfor -%}
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -372,22 +224,6 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%}
-    =============================================
-    STICKY BUY BAR — appears after scrolling past hero
-    =============================================
-  {%- endcomment -%}
-  <div class="pdp__sticky-bar" id="pdp-sticky-bar">
-    <div class="pdp__sticky-inner">
-      <div class="pdp__sticky-info">
-        <span class="pdp__sticky-name">{{ product.title | truncate: 25 }}</span>
-        <span class="pdp__sticky-price">{{ current_variant.price | money }}</span>
-      </div>
-      <button type="button" class="pdp__sticky-buy" id="sticky-buy" data-has-sizes="{{ has_sizes }}">
-        Add to bag
-      </button>
-    </div>
-  </div>
 
 </section>
 
@@ -397,7 +233,6 @@
 
 <script src="{{ 'variant-selector.js' | asset_url }}" defer></script>
 <script src="{{ 'product-gallery.js' | asset_url }}" defer></script>
-<script src="{{ 'product-scroll.js' | asset_url }}" defer></script>
 
 {% schema %}
 {
@@ -419,55 +254,6 @@
       "id": "features_bg_color",
       "label": "Features card background",
       "default": "transparent"
-    },
-    {
-      "type": "header",
-      "content": "Social Proof"
-    },
-    {
-      "type": "range",
-      "id": "viewers_min",
-      "label": "Minimum viewers count",
-      "min": 5,
-      "max": 50,
-      "step": 1,
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "sold_count",
-      "label": "Sold in last 24h",
-      "min": 10,
-      "max": 200,
-      "step": 1,
-      "default": 47
-    },
-    {
-      "type": "header",
-      "content": "The Promise Section"
-    },
-    {
-      "type": "text",
-      "id": "promise_eyebrow",
-      "label": "Eyebrow text",
-      "default": "The Promise"
-    },
-    {
-      "type": "textarea",
-      "id": "promise_heading",
-      "label": "Promise heading",
-      "default": "Still jet black after 50+ washes."
-    },
-    {
-      "type": "textarea",
-      "id": "promise_subtext",
-      "label": "Promise subtext",
-      "default": "Our colour-lock dye process bonds black pigment deep into the fibre. No fading. No greying. Just black."
-    },
-    {
-      "type": "image_picker",
-      "id": "promise_image",
-      "label": "Promise section image"
     }
   ],
   "blocks": [
@@ -506,43 +292,6 @@
           "default": "Comfort"
         }
       ]
-    },
-    {
-      "type": "trust_item",
-      "name": "Trust Badge",
-      "limit": 5,
-      "settings": [
-        {
-          "type": "select",
-          "id": "icon",
-          "label": "Icon",
-          "options": [
-            { "value": "truck", "label": "Truck (Shipping)" },
-            { "value": "refresh", "label": "Refresh (Returns)" },
-            { "value": "shield", "label": "Shield (Secure)" },
-            { "value": "credit-card", "label": "Card (COD/Payment)" },
-            { "value": "check", "label": "Check (Quality)" }
-          ],
-          "default": "truck"
-        },
-        {
-          "type": "image_picker",
-          "id": "custom_icon",
-          "label": "Custom icon (overrides built-in)"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title",
-          "default": "Free Shipping"
-        },
-        {
-          "type": "text",
-          "id": "subtitle",
-          "label": "Subtitle",
-          "default": "All over India"
-        }
-      ]
     }
   ],
   "presets": [
@@ -552,10 +301,7 @@
         { "type": "feature", "settings": { "icon": "star", "text": "4.6 /5" } },
         { "type": "feature", "settings": { "icon": "layers", "text": "Comfort" } },
         { "type": "feature", "settings": { "icon": "shield", "text": "Durable" } },
-        { "type": "feature", "settings": { "icon": "refresh", "text": "Adaptive" } },
-        { "type": "trust_item", "settings": { "icon": "truck", "title": "Free Shipping", "subtitle": "All over India" } },
-        { "type": "trust_item", "settings": { "icon": "refresh", "title": "7 Day Returns", "subtitle": "Free return shipping" } },
-        { "type": "trust_item", "settings": { "icon": "credit-card", "title": "COD Available", "subtitle": "Pay on delivery" } }
+        { "type": "feature", "settings": { "icon": "refresh", "text": "Adaptive" } }
       ]
     }
   ]

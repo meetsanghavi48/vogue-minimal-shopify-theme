@@ -53,50 +53,18 @@
               "icon": "star",
               "text": "Straight Fit"
             }
-          },
-          "trust_shipping": {
-            "type": "trust_item",
-            "settings": {
-              "icon": "truck",
-              "title": "Free Shipping",
-              "subtitle": "All over India"
-            }
-          },
-          "trust_returns": {
-            "type": "trust_item",
-            "settings": {
-              "icon": "refresh",
-              "title": "7 Day Returns",
-              "subtitle": "Free return shipping"
-            }
-          },
-          "trust_cod": {
-            "type": "trust_item",
-            "settings": {
-              "icon": "credit-card",
-              "title": "COD Available",
-              "subtitle": "Pay on delivery"
-            }
           }
         },
         "block_order": [
           "feature_E87QqN",
           "feature_Xrq7mH",
           "feature_44QV9U",
-          "feature_kkkqWW",
-          "trust_shipping",
-          "trust_returns",
-          "trust_cod"
+          "feature_kkkqWW"
         ],
         "settings": {
           "size_chart_page": "mens-size-chart",
           "add_button_text": "Add to bag",
-          "features_bg_color": "rgba(0,0,0,0)",
-          "viewers_min": 12,
-          "sold_count": 47,
-          "promise_eyebrow": "The Promise",
-          "promise_heading": "Still jet black after 50+ washes.",
-          "promise_subtext": "Our colour-lock dye process bonds black pigment deep into the fibre. No fading. No greying. Just black."
+          "features_bg_color": "rgba(0,0,0,0)"
         }
       },
       "footer": {
