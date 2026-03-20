@@ -62,8 +62,9 @@
           "feature_kkkqWW"
         ],
         "settings": {
-          "size_chart_url": "",
-          "add_button_text": "Add to my bag"
+          "size_chart_page": "mens-size-chart",
+          "add_button_text": "Add to my bag",
+          "features_bg_color": "rgba(0,0,0,0)"
         }
       },
       "footer": {
