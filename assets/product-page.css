@@ -1,17 +1,13 @@
 /* ===========================
-   Vogue Minimal — Product Page
-   Complete redesign — story-driven, conversion-focused
+   Vogue Minimal — Product Page v2
+   Clean, scrollable, no parallax
    =========================== */
 
-/* ---- Header ---- */
+/* ---- Header overrides for PDP ---- */
 .site-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
+  position: sticky;
+  top: 0;
   z-index: 200;
-  background: transparent;
-  transition: background 0.3s ease;
-}
-.site-header.is-scrolled {
   background: var(--color-accent);
   box-shadow: var(--shadow-sm);
 }
@@ -42,25 +38,20 @@
    PDP Container
    =========================== */
 .pdp {
-  position: relative;
-  background: #f0f0f0;
-  overflow: hidden;
+  background: var(--color-accent);
 }
 
 /* ===========================
-   Image Layer — fixed behind
+   Image Gallery
    =========================== */
-.pdp__image-layer {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: calc(100vh - 256px);
-  z-index: 1;
-  overflow: hidden;
+.pdp__gallery {
+  position: relative;
+  width: 100%;
   background: #f5f5f5;
 }
 .pdp__carousel {
   display: flex;
-  width: 100%; height: 100%;
+  width: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -70,10 +61,7 @@
 .pdp__slide {
   flex: 0 0 100%;
   scroll-snap-align: start;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  aspect-ratio: 3 / 4;
 }
 .pdp__image {
   width: 100%; height: 100%;
@@ -83,6 +71,11 @@
   -webkit-user-drag: none;
 }
 
+/* Video */
+.pdp__video { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.pdp__external-video { width: 100%; height: 100%; }
+.pdp__external-video iframe { width: 100%; height: 100%; border: none; }
+
 /* Arrows */
 .pdp__side-arrow {
   position: absolute;
@@ -90,7 +83,7 @@
   transform: translateY(-50%);
   width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: none;
@@ -100,15 +93,15 @@
   transition: all var(--transition-fast);
   z-index: 5;
 }
-.pdp__side-arrow:hover { background: rgba(255,255,255,0.95); }
-.pdp__side-arrow:disabled { opacity: 0; cursor: default; }
+.pdp__side-arrow:hover { background: rgba(255,255,255,1); }
+.pdp__side-arrow:disabled { opacity: 0; pointer-events: none; }
 .pdp__side-arrow--left { left: 12px; }
 .pdp__side-arrow--right { right: 12px; }
 
 /* Dots */
 .pdp__dots {
   position: absolute;
-  bottom: 16px; left: 50%;
+  bottom: 14px; left: 50%;
   transform: translateX(-50%);
   display: flex; gap: 6px;
   z-index: 5;
@@ -118,64 +111,18 @@
   border-radius: var(--radius-full);
   background: rgba(0,0,0,0.2);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 .pdp__dot.is-active {
   background: var(--color-primary);
   width: 20px;
 }
 
-/* Discount badge */
-.pdp__badge {
-  position: absolute;
-  top: 60px; left: 12px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 11px; font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.02em;
-  z-index: 5;
-}
-
-/* Video */
-.pdp__video { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-.pdp__external-video { width: 100%; height: 100%; }
-.pdp__external-video iframe { width: 100%; height: 100%; border: none; }
-
 /* ===========================
-   Bottom Sheet
+   Product Info Card
    =========================== */
-.pdp__sheet {
-  position: relative;
-  z-index: 10;
-  margin-top: calc(100vh - 260px);
-  background: var(--color-accent);
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.08);
-  min-height: auto;
-  transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.pdp__sheet-handle {
-  display: flex;
-  justify-content: center;
-  padding: var(--space-2) 0 0;
-}
-.pdp__handle-bar {
-  width: 36px; height: 4px;
-  background: #ddd;
-  border-radius: var(--radius-full);
-}
-.pdp__sheet-content {
-  padding: var(--space-1) var(--space-4) 0;
-}
-
-/* ===========================
-   Purchase Zone
-   =========================== */
-.pdp__purchase-zone {
-  padding-bottom: 0;
-  border-bottom: none;
-  margin-bottom: 0;
+.pdp__info {
+  padding: var(--space-4) var(--page-padding) var(--space-5);
 }
 
 /* Title */
@@ -183,25 +130,23 @@
   font-family: var(--font-heading-family);
   font-weight: var(--font-heading-weight);
   font-style: var(--font-heading-style);
-  font-size: var(--text-2xl);
-  line-height: 1.15;
+  font-size: var(--text-xl);
+  line-height: 1.2;
   letter-spacing: -0.01em;
-  margin-bottom: 4px;
-  text-align: center;
+  margin-bottom: 6px;
 }
 
-/* Price + Rating row */
+/* Price row */
 .pdp__meta-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-3);
-  margin-bottom: 4px;
+  margin-bottom: var(--space-3);
   flex-wrap: wrap;
 }
 .pdp__price-block {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--space-2);
 }
 .pdp__price {
@@ -213,15 +158,6 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   text-decoration: line-through;
-}
-.pdp__save-badge {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: #22c55e;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.02em;
 }
 
 /* Rating */
@@ -239,21 +175,28 @@
   color: var(--color-text-muted);
 }
 
+/* Divider line */
+.pdp__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-3) 0;
+}
+
 /* Feature badges */
 .pdp__features-card {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 6px;
-  padding: var(--space-2) var(--space-2);
+  padding: var(--space-3) var(--space-2);
   background: #f7f7f7;
   border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
 }
 .pdp__feature {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   flex: 1;
   position: relative;
 }
@@ -306,13 +249,13 @@
 .swatch--beige { background: #d4b896; }
 .swatch--brown { background: #92400e; }
 
-/* Bottom row: Size + Add */
+/* ===========================
+   Bottom Action Row (Size + Add)
+   =========================== */
 .pdp__bottom-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-top: 6px;
-  padding-bottom: 0;
 }
 
 /* Size button */
@@ -372,7 +315,6 @@
 .pdp__add-btn:disabled { opacity: 1; cursor: pointer; }
 .pdp__add-btn.is-success { background: #22c55e; }
 .pdp__add-btn svg { flex-shrink: 0; }
-
 
 /* ===========================
    Size Modal
@@ -503,30 +445,23 @@
   .pdp {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: var(--color-accent);
-    overflow: visible;
+    min-height: calc(100vh - 52px);
   }
-  .pdp__image-layer {
-    position: sticky; top: 0;
-    height: 100vh;
-    grid-column: 1;
+  .pdp__gallery {
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
   }
-  .pdp__sheet {
-    grid-column: 2;
-    margin-top: 0;
-    border-radius: 0;
-    box-shadow: none;
-    min-height: 100vh;
-  }
-  .pdp__sheet-handle { display: none; }
-  .pdp__sheet-content {
-    padding: var(--space-10) var(--space-8);
+  .pdp__info {
+    padding: var(--space-8);
     max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .pdp__name { font-size: var(--text-3xl); }
   .pdp__price { font-size: var(--text-xl); }
   .pdp__add-btn { height: 52px; font-size: var(--text-base); }
   .pdp__size-btn { height: 52px; }
   .pdp__dots { bottom: 24px; }
-  .pdp__badge { top: 24px; left: 20px; }
 }
