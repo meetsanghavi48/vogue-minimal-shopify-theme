@@ -23,6 +23,14 @@
       revealEls.forEach(function(el) {
         revealObserver.observe(el);
       });
+      // Safety fallback: if observer hasn't fired after 3s, reveal all
+      setTimeout(function() {
+        revealEls.forEach(function(el) {
+          if (!el.classList.contains('is-revealed')) {
+            el.classList.add('is-revealed');
+          }
+        });
+      }, 3000);
     } else {
       // Fallback: show everything
       revealEls.forEach(function(el) { el.classList.add('is-revealed'); });

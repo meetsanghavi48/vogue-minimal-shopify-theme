@@ -401,9 +401,12 @@
   transform: translateY(0);
 }
 /* Show everything in Shopify editor */
-.shopify-design-mode .reveal-on-scroll {
-  opacity: 1;
-  transform: none;
+.shopify-design-mode .reveal-on-scroll,
+html.shopify-design-mode .reveal-on-scroll,
+body.shopify-design-mode .reveal-on-scroll,
+[data-shopify-editor-section] .reveal-on-scroll {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* ===========================
