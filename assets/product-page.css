@@ -73,8 +73,8 @@
 }
 .pdp__image {
   width: 100%; height: 100%;
-  object-fit: contain;
-  object-position: center center;
+  object-fit: cover;
+  object-position: center top;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -138,7 +138,11 @@
   background: var(--color-accent);
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -4px 30px rgba(0,0,0,0.08);
-  padding: var(--space-4) var(--page-padding) var(--space-4);
+  padding: var(--space-4) var(--page-padding) var(--space-5);
+  min-height: calc(40svh + 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /* Wishlist button */
@@ -177,7 +181,8 @@
   flex: 1;
 }
 .pdp__compare-price {
-  font-size: var(--text-sm);
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--color-text-muted);
   text-decoration: line-through;
   white-space: nowrap;
