@@ -162,7 +162,7 @@
   flex: 1;
 }
 .pdp__compare-price {
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-text-muted);
   text-decoration: line-through;
@@ -179,7 +179,7 @@
   margin-bottom: var(--space-2);
 }
 .pdp__price {
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--color-primary);
   white-space: nowrap;

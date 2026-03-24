@@ -1,0 +1,169 @@
+<div class="compare" style="padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;">
+  <div class="compare__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="compare__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtext != blank -%}
+      <p class="compare__subtext">{{ section.settings.subtext }}</p>
+    {%- endif -%}
+
+    <div class="compare__slider" id="compare-slider-{{ section.id }}">
+      <div class="compare__img compare__img--before">
+        {%- if section.settings.before_image != blank -%}
+          <img src="{{ section.settings.before_image | image_url: width: 800 }}" alt="{{ section.settings.before_label | default: 'Before' }}" draggable="false">
+        {%- else -%}
+          <div class="compare__placeholder">Before Image</div>
+        {%- endif -%}
+        <span class="compare__label compare__label--before">{{ section.settings.before_label | default: 'Normal' }}</span>
+      </div>
+      <div class="compare__img compare__img--after">
+        {%- if section.settings.after_image != blank -%}
+          <img src="{{ section.settings.after_image | image_url: width: 800 }}" alt="{{ section.settings.after_label | default: 'After' }}" draggable="false">
+        {%- else -%}
+          <div class="compare__placeholder">After Image</div>
+        {%- endif -%}
+        <span class="compare__label compare__label--after">{{ section.settings.after_label | default: 'Blakc' }}</span>
+      </div>
+      <div class="compare__handle" id="compare-handle-{{ section.id }}">
+        <div class="compare__handle-line"></div>
+        <div class="compare__handle-circle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div class="compare__handle-line"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .compare { background: #fff; }
+  .compare__inner { max-width: 480px; margin: 0 auto; padding: 0 16px; }
+  .compare__heading {
+    font-family: var(--font-heading-family, serif);
+    font-size: 1.25rem; font-weight: 700;
+    margin-bottom: 8px; color: #1a1a1a;
+  }
+  .compare__subtext {
+    font-size: 0.85rem; line-height: 1.5;
+    color: #777; margin-bottom: 16px;
+  }
+  .compare__slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  .compare__img { position: relative; }
+  .compare__img img { width: 100%; display: block; }
+  .compare__img--before {
+    position: absolute; inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    width: 50%;
+  }
+  .compare__img--before img {
+    width: auto;
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute; top: 0; left: 0;
+  }
+  .compare__img--after { position: relative; z-index: 1; }
+  .compare__img--after img { width: 100%; object-fit: cover; }
+  .compare__placeholder {
+    aspect-ratio: 4/3;
+    background: #e5e5e5;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #999;
+  }
+  .compare__label {
+    position: absolute;
+    top: 12px;
+    font-size: 13px; font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    z-index: 5;
+  }
+  .compare__label--before { left: 12px; }
+  .compare__label--after { right: 12px; }
+  .compare__handle {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .compare__handle-line {
+    flex: 1; width: 2px;
+    background: #fff;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  .compare__handle-circle {
+    width: 40px; height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    color: #1a1a1a;
+    flex-shrink: 0;
+  }
+  @media (min-width: 768px) {
+    .compare__inner { max-width: 600px; }
+  }
+</style>
+
+<script>
+  (function() {
+    const sid = '{{ section.id }}';
+    const slider = document.getElementById('compare-slider-' + sid);
+    if (!slider) return;
+    const handle = document.getElementById('compare-handle-' + sid);
+    const beforeEl = slider.querySelector('.compare__img--before');
+
+    function move(x) {
+      const rect = slider.getBoundingClientRect();
+      let pct = ((x - rect.left) / rect.width) * 100;
+      pct = Math.max(5, Math.min(95, pct));
+      beforeEl.style.width = pct + '%';
+      handle.style.left = pct + '%';
+    }
+
+    let active = false;
+    slider.addEventListener('pointerdown', function(e) {
+      active = true;
+      slider.setPointerCapture(e.pointerId);
+      move(e.clientX);
+    });
+    slider.addEventListener('pointermove', function(e) {
+      if (active) move(e.clientX);
+    });
+    slider.addEventListener('pointerup', function() { active = false; });
+    slider.addEventListener('pointercancel', function() { active = false; });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Comparison Slider",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Comparison" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Slide to see the difference." },
+    { "type": "image_picker", "id": "before_image", "label": "Before image (left)" },
+    { "type": "text", "id": "before_label", "label": "Before label", "default": "Normal" },
+    { "type": "image_picker", "id": "after_image", "label": "After image (right)" },
+    { "type": "text", "id": "after_label", "label": "After label", "default": "Blakc" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 60, "step": 4, "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 60, "step": 4, "default": 24 }
+  ],
+  "presets": [{ "name": "Comparison Slider" }]
+}
+{% endschema %}

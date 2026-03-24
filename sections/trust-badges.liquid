@@ -1,0 +1,101 @@
+<div class="trust-badges" style="padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;">
+  <div class="trust-badges__inner">
+    {%- for block in section.blocks -%}
+      <div class="trust-badges__item" {{ block.shopify_attributes }}>
+        <div class="trust-badges__icon">
+          {%- if block.settings.custom_icon != blank -%}
+            <img src="{{ block.settings.custom_icon | image_url: width: 64 }}" alt="" width="32" height="32" loading="lazy">
+          {%- else -%}
+            {%- case block.settings.icon -%}
+              {%- when 'truck' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              {%- when 'refresh' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+              {%- when 'shield' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {%- when 'credit-card' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              {%- when 'check' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              {%- when 'award' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              {%- when 'globe' -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+              {%- else -%}<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
+            {%- endcase -%}
+          {%- endif -%}
+        </div>
+        <span class="trust-badges__text">{{ block.settings.text }}</span>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .trust-badges { background: #fff; }
+  .trust-badges__inner {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .trust-badges__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .trust-badges__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a1a;
+  }
+  .trust-badges__icon img { width: 28px; height: 28px; object-fit: contain; }
+  .trust-badges__text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  @media (min-width: 768px) {
+    .trust-badges__inner { max-width: 900px; gap: 48px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Trust Badges",
+  "settings": [
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 60, "step": 4, "default": 12 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 60, "step": 4, "default": 12 }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck (Shipping)" },
+            { "value": "refresh", "label": "Refresh (Returns)" },
+            { "value": "shield", "label": "Shield (Security)" },
+            { "value": "credit-card", "label": "Credit Card (COD)" },
+            { "value": "check", "label": "Check (Verified)" },
+            { "value": "award", "label": "Award" },
+            { "value": "globe", "label": "Globe" }
+          ],
+          "default": "truck"
+        },
+        { "type": "image_picker", "id": "custom_icon", "label": "Custom icon (overrides built-in)" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Free Shipping" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Badges",
+      "blocks": [
+        { "type": "badge", "settings": { "icon": "credit-card", "text": "COD Available" } },
+        { "type": "badge", "settings": { "icon": "refresh", "text": "7 Days Return" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
