@@ -52,7 +52,7 @@
   position: sticky;
   top: 0;
   width: 100%;
-  height: 65svh;
+  height: calc(100svh - 230px);
   z-index: 1;
   overflow: hidden;
   background: #f5f5f5;
@@ -138,26 +138,11 @@
   background: var(--color-accent);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -4px 30px rgba(0,0,0,0.08);
-  padding: var(--space-4) var(--page-padding) 70px;
+  padding: var(--space-3) var(--page-padding) var(--space-4);
 }
 
-/* Wishlist button */
-.pdp__wishlist {
-  position: absolute;
-  top: -24px; right: 24px;
-  width: 48px; height: 48px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--color-accent);
-  border-radius: var(--radius-full);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 11;
-}
-.pdp__wishlist:hover { color: #ef4444; }
-.pdp__wishlist.is-liked { color: #ef4444; }
-.pdp__wishlist.is-liked svg { fill: #ef4444; }
+/* Wishlist button — hidden */
+.pdp__wishlist { display: none; }
 
 /* Title + Compare Price row */
 .pdp__header-row {
@@ -191,7 +176,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 .pdp__price {
   font-size: var(--text-xl);
@@ -265,7 +250,7 @@
   padding: var(--space-3) var(--space-2);
   background: #f7f7f7;
   border-radius: var(--radius-md);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
 }
 .pdp__feature {
   display: flex;
@@ -297,21 +282,11 @@
 
 /* ===========================
    Bottom Row: Size dropdown + Add
-   Fixed to bottom of screen
    =========================== */
 .pdp__bottom-row {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--page-padding);
-  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
-  background: var(--color-accent);
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
 }
 
 /* Size dropdown button */
