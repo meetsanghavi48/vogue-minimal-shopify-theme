@@ -153,39 +153,6 @@
       </button>
     </div>
 
-    <!-- ========== STORY CARDS (alternating image + text) ========== -->
-    {%- assign story_blocks = section.blocks | where: "type", "story_card" -%}
-    {%- if story_blocks.size > 0 -%}
-      <div class="pdp__stories">
-        {%- for block in story_blocks -%}
-          <div class="pdp__story {% cycle 'img-left', 'img-right', 'img-left' %}" {{ block.shopify_attributes }}
-            style="{% if block.settings.bg_color != blank %}background: {{ block.settings.bg_color }};{% endif %}">
-            <div class="pdp__story-img">
-              {%- if block.settings.image != blank -%}
-                <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.heading | escape }}" loading="lazy" width="300" height="300">
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'pdp__story-placeholder' }}
-              {%- endif -%}
-            </div>
-            <div class="pdp__story-text">
-              {%- if block.settings.eyebrow != blank -%}
-                <span class="pdp__story-eyebrow">{{ block.settings.eyebrow }}</span>
-              {%- endif -%}
-              <h3 class="pdp__story-heading">{{ block.settings.heading }}</h3>
-              {%- if block.settings.body != blank -%}
-                <p class="pdp__story-body">{{ block.settings.body }}</p>
-              {%- endif -%}
-              {%- if block.settings.btn_text != blank -%}
-                <a href="{{ block.settings.btn_link | default: '#' }}" class="pdp__story-btn">
-                  {{ block.settings.btn_text }}
-                </a>
-              {%- endif -%}
-            </div>
-          </div>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
   </div>
 
   <!-- ========== SIZE SELECTION MODAL ========== -->
@@ -257,51 +224,6 @@
     }
   ],
   "blocks": [
-    {
-      "type": "story_card",
-      "name": "Story Card",
-      "limit": 6,
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
-        },
-        {
-          "type": "text",
-          "id": "eyebrow",
-          "label": "Eyebrow text",
-          "default": "Feature"
-        },
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Heading goes here"
-        },
-        {
-          "type": "textarea",
-          "id": "body",
-          "label": "Body text",
-          "default": "Describe the feature or benefit of your product here."
-        },
-        {
-          "type": "text",
-          "id": "btn_text",
-          "label": "Button text"
-        },
-        {
-          "type": "url",
-          "id": "btn_link",
-          "label": "Button link"
-        },
-        {
-          "type": "color",
-          "id": "bg_color",
-          "label": "Card background color"
-        }
-      ]
-    },
     {
       "type": "feature",
       "name": "Feature Badge",
