@@ -69,6 +69,70 @@
       "footer": {
         "type": "footer",
         "settings": {}
+      },
+      "trust-badges": {
+        "type": "trust-badges",
+        "blocks": {
+          "badge_chNPmb": {
+            "type": "badge",
+            "settings": {
+              "icon": "truck",
+              "text": "Free Shipping"
+            }
+          }
+        },
+        "block_order": [
+          "badge_chNPmb"
+        ],
+        "settings": {
+          "padding_top": 12,
+          "padding_bottom": 12
+        }
+      },
+      "story-cards": {
+        "type": "story-cards",
+        "settings": {
+          "heading": "",
+          "padding_top": 24,
+          "padding_bottom": 24
+        }
+      },
+      "comparison-slider": {
+        "type": "comparison-slider",
+        "settings": {
+          "heading": "Comparison",
+          "subtext": "Slide to see the difference.",
+          "before_label": "Normal",
+          "after_label": "Blakc",
+          "padding_top": 24,
+          "padding_bottom": 24
+        }
+      },
+      "specs-table": {
+        "type": "specs-table",
+        "settings": {
+          "heading": "Product Specifications",
+          "subheading": "",
+          "padding_top": 24,
+          "padding_bottom": 24
+        }
+      },
+      "recommended-products": {
+        "type": "recommended-products",
+        "settings": {
+          "heading": "Recommended for you",
+          "limit": 6,
+          "padding_top": 20,
+          "padding_bottom": 20
+        }
+      },
+      "judgeme-reviews": {
+        "type": "judgeme-reviews",
+        "settings": {
+          "heading": "Customer Reviews",
+          "padding_top": 24,
+          "padding_bottom": 24
+        }
       }
     },
     "content_for_index": [],
